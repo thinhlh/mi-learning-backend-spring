@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,9 @@ public class Section {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
-    @JsonIgnore
+    @Getter(value = AccessLevel.NONE)
     private Course course;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "section")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "section")
     private Set<Lesson> lessons = new LinkedHashSet<>();
 }

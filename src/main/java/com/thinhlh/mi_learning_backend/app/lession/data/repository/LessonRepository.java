@@ -10,4 +10,6 @@ public interface LessonRepository extends CrudRepository<Lesson, UUID> {
 
     List<Lesson> findAllBySection_Id(UUID section_id);
 
+
+
 }

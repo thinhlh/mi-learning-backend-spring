@@ -83,7 +83,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-        new ObjectMapper().writeValue(response.getOutputStream(), BaseResponse.error(failed.getMessage()));
+        new ObjectMapper().writeValue(response.getOutputStream(), BaseResponse.error("Email or password does not match"));
     }
 
     private LoginRequest getLoginRequest(HttpServletRequest request) {

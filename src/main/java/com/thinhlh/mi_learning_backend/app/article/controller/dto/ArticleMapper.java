@@ -11,7 +11,6 @@ import java.util.UUID;
 public interface ArticleMapper {
     ArticleResponse toArticleResponse(Article article);
 
-    @Mapping(target = "createdDate", expression = "java(LocalDateTime.now())")
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
     Article toArticle(ArticleRequest articleRequest);
 

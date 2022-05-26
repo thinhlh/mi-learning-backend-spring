@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+
 /**
  * Current exceptions that are handled:
  *
@@ -25,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(CustomAuthenticationException.class)
     public ResponseEntity<BaseResponse<String>> handleAuthenticationException(
             CustomAuthenticationException exception,
@@ -46,7 +47,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         var builder = new StringBuilder();
 
         ex.getFieldErrors().forEach(error -> {
-            builder.append(error.getField()).append(": ").append(error.getDefaultMessage());
+            builder.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("\n");
         });
 
         return new ResponseEntity<>(BaseResponse.error(builder.toString()), HttpStatus.BAD_REQUEST);

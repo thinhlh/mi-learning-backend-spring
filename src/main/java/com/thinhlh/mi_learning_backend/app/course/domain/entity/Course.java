@@ -1,19 +1,24 @@
 package com.thinhlh.mi_learning_backend.app.course.domain.entity;
 
-import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
+import com.thinhlh.mi_learning_backend.app.category.domain.entity.Category;
+import com.thinhlh.mi_learning_backend.app.section.domain.entity.Section;
+import com.thinhlh.mi_learning_backend.app.student_course.domain.StudentCourse;
 import com.thinhlh.mi_learning_backend.app.teacher.domain.entity.Teacher;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "course")
-@Getter
 @Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Course {
     @Id
     @Column(name = "id", nullable = false)
@@ -22,6 +27,7 @@ public class Course {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -41,6 +47,13 @@ public class Course {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @ManyToMany(mappedBy = "courses")
-    private Set<Student> students = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    private Set<Section> sections;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @Getter(value = AccessLevel.NONE)
+    private Set<StudentCourse> students = new LinkedHashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Category category;
 }

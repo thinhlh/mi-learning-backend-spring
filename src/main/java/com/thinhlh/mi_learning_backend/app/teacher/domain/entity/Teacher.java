@@ -16,7 +16,7 @@ public class Teacher {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false, mappedBy = "teacher")
     private User user;
 }

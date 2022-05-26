@@ -36,26 +36,15 @@ public abstract class ServletHelper {
         }
     }
 
-    public static Pair<String, List<String>> retrieveUsernameAndRoles(
-            String authorizationToken,
-            Runnable invalidTokenCallback) {
-        return retrieveUsernameAndRoles(null, authorizationToken, invalidTokenCallback);
-    }
-
     /**
      * Retrieve username and roles from current sent token with request
      */
-    public static Pair<String, List<String>> retrieveUsernameAndRoles(
+    public static Pair<String, List<String>> retrieveUsernameAndRolesFromRequest(
             HttpServletRequest request,
-            String authorizationToken,
             Runnable invalidTokenCallback) {
         // If token is not null, this is the authentication case (where request is not yet mapped)
-        String token;
-        if (authorizationToken != null) {
-            token = decodeToken(authorizationToken);
-        } else {
-            token = getRawAuthorizationJWTToken(request);
-        }
+
+        String token = getRawAuthorizationJWTToken(request);
 
         if (token == null) {
             invalidTokenCallback.run();

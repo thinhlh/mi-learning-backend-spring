@@ -6,10 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thinhlh.mi_learning_backend.app.auth.domain.entity.Tokens;
 import com.thinhlh.mi_learning_backend.app.role.domain.entity.Role;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
-import com.thinhlh.mi_learning_backend.config.EnvConfig;
 import com.thinhlh.mi_learning_backend.config.filter.CustomAuthenticationFilter;
 import com.thinhlh.mi_learning_backend.exceptions.CustomAuthenticationException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,7 +17,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
@@ -99,10 +96,8 @@ public abstract class SecurityHelper {
             Consumer<UsernamePasswordAuthenticationToken> onSuccess
     ) {
         try {
-            var usernameAndRoles = ServletHelper.retrieveUsernameAndRoles(
-                    request,
-                    null,
-                    () -> {
+            var usernameAndRoles = ServletHelper.retrieveUsernameAndRolesFromRequest(
+                    request, () -> {
                         throw new CustomAuthenticationException(INVALID_TOKEN);
                     }
             );
@@ -131,7 +126,7 @@ public abstract class SecurityHelper {
      */
     public Tokens authenticate(HttpServletRequest request, Function<String, Role> findRoleByUsername) {
         try {
-            var usernameAndRoles = ServletHelper.retrieveUsernameAndRoles(null, () -> {
+            var usernameAndRoles = ServletHelper.retrieveUsernameAndRolesFromRequest(request, () -> {
                 throw new CustomAuthenticationException(INVALID_TOKEN);
             });
 

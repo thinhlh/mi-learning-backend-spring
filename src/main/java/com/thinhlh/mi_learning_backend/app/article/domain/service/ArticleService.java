@@ -8,5 +8,5 @@ import java.util.List;
 public interface ArticleService {
     List<Article> getArticles();
 
-    Article createArticle(Article article);
+    Article createArticle(ArticleRequest article);
 }

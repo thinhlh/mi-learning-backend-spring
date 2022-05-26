@@ -7,7 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.SubclassMapping;
 
-@Mapper(componentModel = "spring")
+import java.util.UUID;
+
+@Mapper(componentModel = "spring", imports = {UUID.class})
 public interface LessonMapper {
 
 
@@ -19,5 +21,12 @@ public interface LessonMapper {
 
     @Mapping(target = "url", source = "videoUrl")
     VideoLessonResponse toVideoLessonResponse(VideoLesson lesson);
+
+
+    @Mapping(target = "videoLesson", ignore = true)
+    @Mapping(target = "testLesson", ignore = true)
+    @Mapping(target = "section", ignore = true)
+    @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    Lesson toLesson(LessonRequest request);
 
 }

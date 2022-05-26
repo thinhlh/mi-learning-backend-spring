@@ -39,6 +39,6 @@ public class ArticleController extends BaseController {
 
     @PostMapping("/article")
     private ResponseEntity<BaseResponse<Article>> createArticle(@RequestBody @Valid ArticleRequest request) {
-        return successResponse(createArticleUseCase.invoke(mapper.toArticle(request)));
+        return successResponse(createArticleUseCase.invoke(request));
     }
 }

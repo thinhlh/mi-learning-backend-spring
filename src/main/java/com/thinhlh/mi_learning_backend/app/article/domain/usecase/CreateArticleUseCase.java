@@ -1,5 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.article.domain.usecase;
 
+import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleRequest;
 import com.thinhlh.mi_learning_backend.app.article.domain.entity.Article;
 import com.thinhlh.mi_learning_backend.app.article.domain.service.ArticleService;
 import com.thinhlh.mi_learning_backend.base.BaseUseCase;
@@ -15,6 +16,6 @@ public class CreateArticleUseCase implements BaseUseCase {
 
     @Override
     public Article invoke(Object data) throws RuntimeException {
-        return articleService.createArticle((Article) data);
+        return articleService.createArticle((ArticleRequest) data);
     }
 }

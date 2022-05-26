@@ -15,7 +15,7 @@ public class CourseRequest {
     private String description;
 
     @Min(value = 0)
-    private Integer hours;
+    private Integer length;
 
     @NotBlank
     @URL

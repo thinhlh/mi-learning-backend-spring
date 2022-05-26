@@ -16,7 +16,7 @@ public class Role {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id = UUID.randomUUID();
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, updatable = false, unique = true)
     private String title;
 
     public enum RoleName {

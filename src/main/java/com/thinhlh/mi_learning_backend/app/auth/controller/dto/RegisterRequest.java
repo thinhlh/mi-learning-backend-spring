@@ -1,8 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.auth.controller.dto;
 
 import com.thinhlh.mi_learning_backend.app.user.domain.entity.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -11,8 +10,12 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Data
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RegisterRequest {
     @NotBlank
     private String name;
@@ -27,7 +30,7 @@ public class RegisterRequest {
     private String occupation;
 
     @Past
-    private LocalDate birthday;
+    private LocalDate birthday = LocalDate.now();
 
     @NotBlank
     private String role;

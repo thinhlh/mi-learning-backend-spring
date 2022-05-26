@@ -1,5 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.article.data.service;
 
+import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleMapper;
+import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleRequest;
 import com.thinhlh.mi_learning_backend.app.article.data.repository.ArticleRepository;
 import com.thinhlh.mi_learning_backend.app.article.domain.entity.Article;
 import com.thinhlh.mi_learning_backend.app.article.domain.service.ArticleService;
@@ -19,6 +21,7 @@ import java.util.stream.StreamSupport;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository repository;
+    private final ArticleMapper mapper;
 
     @Override
     public List<Article> getArticles() {
@@ -26,7 +29,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Article createArticle(Article article) {
-        return repository.save(article);
+    public Article createArticle(ArticleRequest request) {
+        return repository.save(mapper.toArticle(request));
     }
 }

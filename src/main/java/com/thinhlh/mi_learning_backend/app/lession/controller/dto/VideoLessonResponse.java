@@ -7,5 +7,5 @@ import java.time.LocalTime;
 @Data
 public class VideoLessonResponse {
     private String url;
-    private LocalTime length;
+    private Integer length;
 }

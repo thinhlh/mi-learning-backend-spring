@@ -34,12 +34,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void registerUser(RegisterRequest request) {
-
-        var user = mapper.toUser(request);
-
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userService.createUser(user, request.getRole());
-
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        userService.createUser(request);
     }
 
     @Override
