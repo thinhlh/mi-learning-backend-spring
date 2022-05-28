@@ -15,7 +15,7 @@ public class VideoLesson {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "videoLesson", optional = false, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "videoLesson",fetch = FetchType.LAZY, optional = false)
     private Lesson lesson;
 
     @Column(name = "video_url", nullable = false)

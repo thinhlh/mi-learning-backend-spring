@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class GetUserDetailUseCase implements BaseUseCase {
+public class GetUserDetailUseCase implements BaseUseCase<String,UserDetailResponse> {
 
     private final UserService userService;
 
     @Override
-    public UserDetailResponse invoke(Object data) throws RuntimeException {
-        return userService.getUserDetail((String) data);
+    public UserDetailResponse invoke(String data) throws RuntimeException {
+        return userService.getUserDetail(data);
     }
 }

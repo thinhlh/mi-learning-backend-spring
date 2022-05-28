@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GetRolesUseCase implements BaseUseCase {
+public class GetRolesUseCase implements BaseUseCase<Object, List<Role>> {
 
     private final RoleService service;
 

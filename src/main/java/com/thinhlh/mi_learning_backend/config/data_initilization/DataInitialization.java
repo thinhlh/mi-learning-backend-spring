@@ -9,10 +9,27 @@ import com.thinhlh.mi_learning_backend.app.category.controller.dto.CategoryReque
 import com.thinhlh.mi_learning_backend.app.category.domain.service.CategoryService;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.course.domain.service.CourseService;
+import com.thinhlh.mi_learning_backend.app.lession.controller.dto.LessonRequest;
+import com.thinhlh.mi_learning_backend.app.lession.domain.service.LessonService;
+import com.thinhlh.mi_learning_backend.app.rating.controller.dto.RatingRequest;
+import com.thinhlh.mi_learning_backend.app.rating.data.repository.RatingRepository;
+import com.thinhlh.mi_learning_backend.app.rating.domain.entity.Rating;
+import com.thinhlh.mi_learning_backend.app.rating.domain.service.RatingService;
 import com.thinhlh.mi_learning_backend.app.role.data.repository.RoleRepository;
 import com.thinhlh.mi_learning_backend.app.role.domain.entity.Role;
 import com.thinhlh.mi_learning_backend.app.role.domain.service.RoleService;
+import com.thinhlh.mi_learning_backend.app.schedule.controller.dto.ScheduleRequest;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.ScheduleColor;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.ScheduleStatus;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.service.ScheduleService;
+import com.thinhlh.mi_learning_backend.app.section.controller.dto.SectionRequest;
+import com.thinhlh.mi_learning_backend.app.section.domain.entity.Section;
+import com.thinhlh.mi_learning_backend.app.section.domain.service.SectionService;
+import com.thinhlh.mi_learning_backend.app.student_course.domain.service.StudentCourseService;
+import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
+import com.thinhlh.mi_learning_backend.app.teacher.domain.entity.Teacher;
 import com.thinhlh.mi_learning_backend.app.user.domain.service.UserService;
+import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +37,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
 
@@ -27,13 +46,21 @@ import java.util.*;
 @Configuration
 public class DataInitialization {
 
+    private final RatingRepository ratingRepository;
+    private final TeacherRepository teacherRepository;
+
     private final AuthService authService;
     private final ArticleService articleService;
-    private final RoleService roleService;
-    private final UserService userService;
-    private final CourseService courseService;
-
     private final CategoryService categoryService;
+    private final CourseService courseService;
+    private final LessonService lessonService;
+    private final StudentCourseService studentCourseService;
+    private final RoleService roleService;
+    private final ScheduleService scheduleService;
+    private final UserService userService;
+    private final SectionService sectionService;
+    private final RatingService ratingService;
+
 
     @Bean
     @Order(1)
@@ -66,6 +93,62 @@ public class DataInitialization {
 
     @Bean
     @Order(3)
+    CommandLineRunner initTeachers() {
+        return args -> {
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Nhan CV")
+                            .password("nhancv")
+                            .email("nhancv@gmail.com")
+                            .occupation(Role.RoleName.teacher.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.teacher.name())
+                            .build()
+            );
+
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Reso Coder")
+                            .password("resocoder")
+                            .email("resocoder@gmail.com")
+                            .occupation(Role.RoleName.teacher.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.teacher.name())
+                            .build()
+            );
+
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Angela Yu")
+                            .password("angelayu")
+                            .email("angelayu@gmail.com")
+                            .occupation(Role.RoleName.teacher.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.teacher.name())
+                            .build()
+            );
+        };
+    }
+
+    @Bean
+    @Order(4)
+    CommandLineRunner initStudents() {
+        return args -> {
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Hoang Thinh")
+                            .password("hoangthinh")
+                            .email("hoangthinh@gmail.com")
+                            .occupation(Role.RoleName.student.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.student.name())
+                            .build()
+            );
+        };
+    }
+
+    @Bean
+    @Order(5)
     CommandLineRunner initCategories() {
         return args -> {
             new ArrayList<String>() {{
@@ -76,7 +159,7 @@ public class DataInitialization {
                 add("Django");
                 add("Fast API");
                 add("Machine Learning");
-                add("Dev & Life");
+                add("Architecture");
             }}.forEach(title -> {
                 categoryService.createCategory(
                         CategoryRequest
@@ -88,9 +171,10 @@ public class DataInitialization {
     }
 
     @Bean
-    @Order(4)
+    @Order(6)
     CommandLineRunner initArticles() {
         return args -> {
+            var categories = categoryService.getAllCategories();
             new ArrayList<ArticleRequest>() {{
                 add(
                         ArticleRequest
@@ -98,6 +182,7 @@ public class DataInitialization {
                                 .author("nhancv")
                                 .createdDate(LocalDate.of(2022, Month.APRIL, 19))
                                 .thumbnail("https://miro.medium.com/max/1400/1*2fyw9zqntb47qCnXcuSLtw.png")
+                                .category(categories.get(7).getTitle())
                                 .title("How fast to take AWS Certificates?")
                                 .url("https://nhancv.com/how-fast-to-take-aws-certificates/")
                                 .build()
@@ -110,6 +195,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.MARCH, 14))
                                 .thumbnail("https://monetum.com/wp-content/uploads/2021/09/solana2-e1631861887338.png")
                                 .title("Solidity Smart Contract Convention X")
+                                .category(categories.get(2).getTitle())
                                 .url("https://nhancv.com/solidity-smart-contract-convention-x/")
                                 .build()
                 );
@@ -121,6 +207,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.JANUARY, 8))
                                 .thumbnail("https://docs.aws.amazon.com/whitepapers/latest/web-application-hosting-best-practices/images/image4.png")
                                 .title("An AWS Cloud architecture for web hosting 3-Tiers")
+                                .category(categories.get(7).getTitle())
                                 .url("https://nhancv.com/an-aws-cloud-architecture-for-web-hosting%e2%80%8a-%e2%80%8a3-tiers/")
                                 .build()
                 );
@@ -132,6 +219,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.APRIL, 28))
                                 .thumbnail("https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2022/04/iStock-466268301-768x509.jpg")
                                 .title("Dynamic Data Race Detection in Go Code")
+                                .category(categories.get(7).getTitle())
                                 .url("https://eng.uber.com/dynamic-data-race-detection-in-go-code/¬")
                                 .build()
                 );
@@ -143,6 +231,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.MARCH, 10))
                                 .thumbnail("https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2022/03/1-1-3-768x457.png")
                                 .title("One Stone, Three Birds: Finer-Grained Encryption @ Apache Parquet™")
+                                .category(categories.get(7).getTitle())
                                 .url("https://eng.uber.com/one-stone-three-birds-finer-grained-encryption-apache-parquet/")
                                 .build()
                 );
@@ -154,6 +243,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.FEBRUARY, 10))
                                 .thumbnail("https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2022/02/cover_figure-768x455.png")
                                 .title("DeepETA: How Uber Predicts Arrival Times Using Deep Learning")
+                                .category(categories.get(6).getTitle())
                                 .url("https://eng.uber.com/deepeta-how-uber-predicts-arrival-times/")
                                 .build()
                 );
@@ -165,6 +255,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.APRIL, 13))
                                 .thumbnail("https://miro.medium.com/max/1400/0*zWqzYt1KvSpkVSSL")
                                 .title("How Netflix Content Engineering makes a federated graph searchable")
+                                .category(categories.get(7).getTitle())
                                 .url("https://netflixtechblog.com/how-netflix-content-engineering-makes-a-federated-graph-searchable-5c0c1c7d7eaf")
                                 .build()
                 );
@@ -177,6 +268,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2017, Month.JANUARY, 19))
                                 .thumbnail("https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/infrastructure/2017/behind-twitter-scale/eng_infra_007.png.img.fullhd.medium.png")
                                 .title("The Infrastructure Behind Twitter: Scale")
+                                .category(categories.get(7).getTitle())
                                 .url("https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale")
                                 .build()
                 );
@@ -189,6 +281,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.MARCH, 17))
                                 .thumbnail("https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/insights/2022/missing-node-features/image2.png.img.fullhd.medium.png")
                                 .title("Graph machine learning with missing node features")
+                                .category(categories.get(6).getTitle())
                                 .url("https://blog.twitter.com/engineering/en_us/topics/insights/2022/graph-machine-learning-with-missing-node-features")
                                 .build()
                 );
@@ -201,6 +294,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.FEBRUARY, 14))
                                 .thumbnail("https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/infrastructure/2022/manhattan-data-transfer/image1.png.img.fullhd.medium.png")
                                 .title("Data transfer in Manhattan using RocksDB")
+                                .category(categories.get(7).getTitle())
                                 .url("https://blog.twitter.com/engineering/en_us/topics/insights/2022/graph-machine-learning-with-missing-node-features")
                                 .build()
                 );
@@ -212,6 +306,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.FEBRUARY, 4))
                                 .thumbnail("https://cdn.cms-twdigitalassets.com/content/dam/blog-twitter/engineering/en_us/open-source/2022/apache-thrift/image1.png.img.fullhd.medium.png")
                                 .title("Introducing a new Swift package for Apache Thrift")
+                                .category(categories.get(4).getTitle())
                                 .url("https://blog.twitter.com/engineering/en_us/topics/open-source/2022/introducing-twitter-apache-thrift")
                                 .build()
                 );
@@ -224,6 +319,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.JANUARY, 8))
                                 .thumbnail("https://miro.medium.com/max/1400/0*ZQ9Xa7CINFVMA95w")
                                 .title("Introducing Flutter 3")
+                                .category(categories.get(0).getTitle())
                                 .url("https://medium.com/flutter/introducing-flutter-3-5eb69151622f")
                                 .build()
                 );
@@ -235,6 +331,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.MARCH, 24))
                                 .thumbnail("https://blog.codemagic.io/uploads/covers/codemagic-blog-header-Flutter-M1.png")
                                 .title("Flutter builds are way faster with M1 machines")
+                                .category(categories.get(0).getTitle())
                                 .url("https://blog.codemagic.io/flutter-m1-vm-comparison/")
                                 .build()
                 );
@@ -246,6 +343,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.JANUARY, 7))
                                 .thumbnail("https://djangocentral.com/media/uploads/screely-1552995251107_JMYje3Q.png")
                                 .title("Building A Blog Application With Django")
+                                .category(categories.get(1).getTitle())
                                 .url("https://djangocentral.com/building-a-blog-application-with-django/")
                                 .build()
                 );
@@ -257,6 +355,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.DECEMBER, 16))
                                 .thumbnail("https://adamj.eu/tech/assets/2021-12-16-revolving-disc.jpg")
                                 .title("Automatically Reload Your Browser in Development")
+                                .category(categories.get(5).getTitle())
                                 .url("https://adamj.eu/tech/2021/12/16/introducing-django-browser-reload/")
                                 .build()
                 );
@@ -268,6 +367,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2020, Month.NOVEMBER, 28))
                                 .thumbnail("https://raw.githubusercontent.com/roman-right/beanie/main/assets/logo/white_bg.svg")
                                 .title("Building a CRUD App with FastAPI, MongoDB, and Beanie")
+                                .category(categories.get(5).getTitle())
                                 .url("https://djangocentral.com/building-a-blog-application-with-django/")
                                 .build()
                 );
@@ -279,6 +379,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.DECEMBER, 21))
                                 .thumbnail("https://miro.medium.com/max/1400/0*6jI576ctpBUF7eMH.png")
                                 .title("What I accomplished in 2021 & my challenge for 2022")
+                                .category(categories.get(2).getTitle())
                                 .url("https://blog.inkdrop.app/what-i-accomplished-in-2021-my-challenge-for-2022-86bcf1d29ea1")
                                 .build()
                 );
@@ -290,6 +391,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.JANUARY, 28))
                                 .thumbnail("https://miro.medium.com/max/1400/1*pHDobfHmUUsYnkskWpCAvg.png")
                                 .title("I’ll take a 3-week paternity leave")
+                                .category(categories.get(2).getTitle())
                                 .url("https://blog.inkdrop.app/ill-take-a-3-week-paternity-leave-4ff66b36c8cc")
                                 .build()
                 );
@@ -301,6 +403,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.JANUARY, 7))
                                 .thumbnail("https://miro.medium.com/max/1400/1*2Gq4l4XtHQaa3gQke9jhag.jpeg")
                                 .title("Running a React Native app on Android Emulator in M1 Mac")
+                                .category(categories.get(3).getTitle())
                                 .url("https://blog.inkdrop.app/running-a-react-native-app-on-android-emulator-in-m1-mac-76a16348d1e4")
                                 .build()
                 );
@@ -312,6 +415,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.NOVEMBER, 25))
                                 .thumbnail("https://djangocentral.com/media/uploads/screely-1552995251107_JMYje3Q.png")
                                 .title("How Environmentally Green is Solana Blockchain?")
+                                .category(categories.get(2).getTitle())
                                 .url("https://solana.blog/how-environmentally-green-is-solana-blockchain/")
                                 .build()
                 );
@@ -323,6 +427,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2021, Month.AUGUST, 8))
                                 .thumbnail("https://solana.blog/wp-content/uploads/sites/8/2021/08/solana-breakpoint.png")
                                 .title("Solana Breakpoint Conference Nov 2021")
+                                .category(categories.get(2).getTitle())
                                 .url("https://solana.blog/solana-breakpoint-conference-nov-2021/")
                                 .build()
                 );
@@ -334,6 +439,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.MARCH, 25))
                                 .thumbnail("https://flutterawesome.com/content/images/2022/05/SQLiteWrapper.png")
                                 .title("A simple way to easily use the SQLite library from Dart and Flutter")
+                                .category(categories.get(0).getTitle())
                                 .url("https://feedly.com/i/entry/QDe32UKlTyAUFiUbv2G2FWNoxgNbC4IVQjQY6b6cOWo=_180fa5d3272:3d46e55:6459d2ee")
                                 .build()
                 );
@@ -345,6 +451,7 @@ public class DataInitialization {
                                 .createdDate(LocalDate.of(2022, Month.JANUARY, 12))
                                 .thumbnail("https://raw.githubusercontent.com/VeryGoodOpenSource/dart_frog/main/assets/dart_frog_logo_black.png#gh-light-mode-only")
                                 .title("A fast, minimalistic backend framework for Dart")
+                                .category(categories.get(0).getTitle())
                                 .url("https://flutterawesome.com/a-fast-minimalistic-backend-framework-for-dart/")
                                 .build()
                 );
@@ -354,11 +461,12 @@ public class DataInitialization {
     }
 
     @Bean
-    @Order(5)
+    @Order(7)
     CommandLineRunner initCourses() {
         return args -> {
-            new ArrayList<Course>() {{
-                var categories = categoryService.getAllCategories();
+            var categories = categoryService.getAllCategories();
+            var teachers = ListHelper.toList(teacherRepository.findAll());
+            var courses = new ArrayList<Course>() {{
 
                 add(Course.builder()
                         .id(UUID.randomUUID())
@@ -368,6 +476,7 @@ public class DataInitialization {
                         .length(24 * 60 * 60)
                         .price(20.99)
                         .category(categories.get(0))
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -378,6 +487,7 @@ public class DataInitialization {
                         .length(12 * 60 * 60)
                         .price(18.99)
                         .category(categories.get(0))
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -388,6 +498,7 @@ public class DataInitialization {
                         .category(categories.get(0))
                         .length(1 * 60 * 60)
                         .price(2.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -398,6 +509,7 @@ public class DataInitialization {
                         .category(categories.get(0))
                         .length(1 * 60 * 60)
                         .price(2.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -408,6 +520,7 @@ public class DataInitialization {
                         .length(4 * 60 * 60)
                         .category(categories.get(0))
                         .price(4.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -418,6 +531,7 @@ public class DataInitialization {
                         .length(10 * 60 * 60)
                         .category(categories.get(0))
                         .price(15.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
 
@@ -429,6 +543,7 @@ public class DataInitialization {
                         .length(60 * 60 * 60)
                         .category(categories.get(1))
                         .price(72.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -439,6 +554,7 @@ public class DataInitialization {
                         .length(70 * 60 * 60)
                         .category(categories.get(1))
                         .price(99.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -449,6 +565,7 @@ public class DataInitialization {
                         .length(14 * 60 * 60)
                         .category(categories.get(1))
                         .price(72.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -459,6 +576,7 @@ public class DataInitialization {
                         .length(1 * 60 * 60)
                         .category(categories.get(2))
                         .price(10.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -468,6 +586,7 @@ public class DataInitialization {
                         .description("Welcome to the Ethereum Blockchain Developer Bootcamp With Solidity. The only course you'll need to become an Ethereum blockchain developer. With over 1,900 5 stars reviews, this course is one of the highest-rated Ethereum blockchain development courses online.")
                         .length(12 * 60 * 60)
                         .category(categories.get(2))
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .price(55.99)
                         .build());
 
@@ -479,6 +598,7 @@ public class DataInitialization {
                         .length(16 * 60 * 60)
                         .category(categories.get(2))
                         .price(9.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -489,6 +609,7 @@ public class DataInitialization {
                         .length(55 * 60 * 60)
                         .category(categories.get(3))
                         .price(55.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -499,6 +620,7 @@ public class DataInitialization {
                         .length(55 * 60 * 60)
                         .category(categories.get(3))
                         .price(55.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -509,6 +631,7 @@ public class DataInitialization {
                         .length(49 * 60 * 60)
                         .category(categories.get(3))
                         .price(84.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -519,6 +642,7 @@ public class DataInitialization {
                         .length(30 * 60 * 60)
                         .category(categories.get(3))
                         .price(19.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -529,6 +653,7 @@ public class DataInitialization {
                         .length(25 * 60 * 60)
                         .category(categories.get(4))
                         .price(20.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -539,6 +664,7 @@ public class DataInitialization {
                         .length(19 * 60 * 60)
                         .category(categories.get(4))
                         .price(20.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -549,6 +675,7 @@ public class DataInitialization {
                         .length(23 * 60 * 60)
                         .category(categories.get(4))
                         .price(20.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -559,6 +686,7 @@ public class DataInitialization {
                         .length(27 * 60 * 60)
                         .category(categories.get(5))
                         .price(20.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -569,6 +697,7 @@ public class DataInitialization {
                         .length(15 * 60 * 60)
                         .category(categories.get(5))
                         .price(30.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -578,7 +707,8 @@ public class DataInitialization {
                         .description("FastAPI and Python are two of the hottest technologies in the market for building high performing APIs. By the end of this course, you will have built production ready RESTful APIs, a production ready Full Stack application, setup production ready databases, and deployed your FastAPI application so the world can use YOUR app.")
                         .length(34 * 60 * 60)
                         .category(categories.get(5))
-                        .price(52.99)
+                        .price(62.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -588,7 +718,8 @@ public class DataInitialization {
                         .description("Complete Data Science Training: Mathematics, Statistics, Python, Advanced Statistics in Python, Machine & Deep Learning")
                         .length(9 * 60 * 60)
                         .category(categories.get(6))
-                        .price(52.99)
+                        .price(43.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -598,7 +729,8 @@ public class DataInitialization {
                         .description("Learn Data Science, Data Analysis, Machine Learning (Artificial Intelligence) and Python with Tensorflow, Pandas & more!")
                         .length(16 * 60 * 60)
                         .category(categories.get(6))
-                        .price(52.99)
+                        .price(80.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
 
                 add(Course.builder()
@@ -609,8 +741,221 @@ public class DataInitialization {
                         .length(10 * 60 * 60)
                         .category(categories.get(6))
                         .price(7.99)
+                        .teacher(teachers.get(new Random().nextInt(0, teachers.size())))
                         .build());
-            }}.forEach(courseService::createCourse);
+            }};
+
+            courses.forEach(courseService::createCourse);
+
+
+            studentJoinCourse(courses);
+            initRatings(courses);
+            var sections = initSections(courses);
+            initLessons(sections);
+        };
+    }
+
+    private void studentJoinCourse(List<Course> courses) {
+        courses.forEach(course -> {
+            if ((new Random().nextInt(0, 3)) % 3 == 0) {
+                studentCourseService.studentJoinCourse("hoangthinh@gmail.com", course.getId());
+            }
+            studentCourseService.studentJoinCourse("student@gmail.com", course.getId());
+        });
+    }
+
+    private void initRatings(List<Course> courses) {
+
+        var contents = new ArrayList<String>() {{
+            add("Amazing stuff, as usual. You're literally the best Flutter Tutor out there. Keep up the good work!");
+            add("I applied for a development job and went through 3 interviews. After the 3rd interview, I was given a take-home assignment that requires us to know clean architecture. I know nothing about clean architecture but have experience developing apps. The company gave me some slides to learn clean architecture but I don't think they explain it that well. I am reading your written tutorials and then watching the videos and taking notes. You are saving me! Thank you!");
+            add("What an amazing series. I'm so thankful for all of the efforts you put into this series. Keep it up");
+            add("This is an amazing course you've put together, really appreciate all the hard work you put into it. In the future would love to hear more about how to handle more complex cases with full CRUD operations, as well as multiple views/blocs/repositories which are interdependent. Looking forward to the next class!");
+            add("I love this course.");
+            add("Sometimes it is so hard to catchup.");
+            add("I do not understand anything");
+            add("Perfect explanations, perfect speed.  Fantastic job.  Best Flutter Tutorial I've seen on YouTube! Hats Off to you Sir!");
+            add("Thanks for this great video! Coding is easy, but designing a good architecture is quite a challenge.");
+            add("I think we could name repositories in domain layer: abstract_repo and the one in the data layer to be: repo_implements. It could be easy to understand the differences as such. My beginner opinion.");
+            add("Interested for the next part to see how the design holds up in a larger more complex app. I’ve seen really similar designs in a web service, but I’m worried that doing things like showing data from a cached source before responding with the updated data from an api will be difficult because the repo is separated from the bloc and the domain has to pass the update through.");
+            add("A more complex app would have many features that potentially share the same entities and data.  Should those directory structures be up a level, outside the feature tree?");
+            add("Nice one. A lot of tutorials are focused on explaing one thing, a couple of them are showing archtectirure patterns, almost none of them are explaing testing. You are planning to create it all together and whats more with TDD. Awsome job and desire to share knowledge. Thanks for that and I hope, We’ll see a lot of videos from you");
+            add("OH MY GOD! You make me to understand a lot design, framework , code I have coding 2 year . You're video open my mind forever. Thanks, sir.");
+            add("VERY good explanation. Thanks a lot for sharing this with us!");
+            add("Hey Reso ! Amazing content I think you should make a video explaining the sequence of videos a person should watch  that you have uploaded  to be a good flutter developer");
+            add("Are those features meant to be independent of each other? And if yes, there would be code duplication. What is the best approach in your opinion?");
+            add("After watching ton of videos...I finally found yours who took time to go into the depth of things. Thank you");
+            add("Nice one. A lot of tutorials are focused on explaing one thing, a couple of them are showing archtectirure patterns, almost none of them are explaing testing. You are planning to create it all together and whats more with TDD. Awsome job and desire to share knowledge. Thanks for that and I hope, We’ll see a lot of videos from you");
+            add("Great. There's an \"flutter modular\" that is very similar, if not the same approach. The difference is that they call it modules and not features. Also, has it has a package the are some routing and DI included along side with the pattern. I will watch the playlist, this kind of stuff is really good when the app start to grow. Thanks");
+            add("I'm in the middle of my first flutter project, And I wish I had found you earlier. I'm a fan of Uncle Bob and clean architecture.");
+            add("Best video I've ever seen about flutter architecture! Thank you very much for the content!");
+            add("This is what I need. Love it, big thanks, excellent work dude!");
+            add("What an amazing series. I would to know what's the theme are you using in vsCode ?");
+            add("Would a mapper substitute the inheritance of models from the entities? (I believe it creates betters separation of concerns)");
+            add("Hi. I have question that, we shoud create new feature for each screen or not? because we have pages, widgets for each feature. How do we divide project to features easily?");
+        }};
+
+        for (int i = 0; i < courses.size() - 1; i++) {
+            for (int j = 0; j < new Random().nextInt(0, contents.size()); j++) {
+                ratingService.createRating(RatingRequest.builder()
+                        .courseId(courses.get(i).getId())
+                        .value(new Random().nextInt(1, 6))
+                        .studentId(userService.getUserDetail("student@gmail.com").getId())
+                        .content(contents.get(new Random().nextInt(0, contents.size())))
+                        .build());
+            }
+        }
+    }
+
+
+    List<Section> initSections(List<Course> courses) {
+        var sections = new ArrayList<Section>();
+
+        courses.forEach(course -> {
+            sections.add(sectionService.createSection(SectionRequest.builder()
+                    .courseId(course.getId())
+                    .title("Introduction")
+                    .build()));
+        });
+
+        return sections;
+    }
+
+    void initLessons(List<Section> sections) {
+
+        var videoURLs = new ArrayList<String>() {{
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B1%5D%20%E2%80%93%20Explanation%20%26%20Project%20Structure.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B2%5D%20%E2%80%93%20Entities%20%26%20Use%20Cases.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B5%5D%20%E2%80%93%20Contracts%20of%20Data%20Sources.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B6%5D%20%E2%80%93%20Repository%20Implementation.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B7%5D%20%E2%80%93%20Network%20Info.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B8%5D%20%E2%80%93%20Local%20Data%20Source.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B9%5D%20%E2%80%93%20Remote%20Data%20Source.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B10%5D%20%E2%80%93%20Bloc%20Scaffolding%20%26%20Input%20Conversion.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B11%5D%20%E2%80%93%20Bloc%20Implementation%201_2.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B12%5D%20%E2%80%93%20Bloc%20Implementation%202_2.mp4");
+            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B13%5D%20%E2%80%93%20Dependency%20Injection.mp4");
+        }};
+
+        sections.forEach(section ->
+                lessonService.createLesson(
+                        LessonRequest
+                                .builder()
+                                .isVideo(new Random().nextBoolean())
+                                .title("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure")
+                                .videoUrl(videoURLs.get(new Random().nextInt(0, videoURLs.size())))
+                                .length(new Random().nextInt(0, 60 * 60 + 1))
+                                .sectionId(section.getId())
+                                .build())
+        );
+    }
+
+    @Bean
+    @Order(7)
+    CommandLineRunner initSchedules() {
+        return args -> {
+
+            // TODAY
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.BROWN.name())
+                            .dueDate(LocalDateTime.now())
+                            .location("Microsoft Teams - msjkl")
+                            .title("This is a title")
+                            .status(ScheduleStatus.COMPLETED.name())
+                            .note("This is a noteRemember to bring your own calculator. We don 't have any responsibility to resolve your problem during the test.")
+                            .build());
+
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.GREEN.name())
+                            .dueDate(LocalDateTime.now())
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.PENDING.name())
+                            .note("This is a note")
+                            .build());
+
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.BLUE.name())
+                            .dueDate(LocalDateTime.now())
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.COMPLETED.name())
+                            .note("This is a note")
+                            .build());
+
+            // Previous
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.CYAN.name())
+                            .dueDate(LocalDateTime.of(2022, 4, 25, 4, 3))
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.OVERDUE.name())
+                            .note("This is a note")
+                            .build());
+
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.BLUE.name())
+                            .dueDate(LocalDateTime.of(2022, 5, 15, 4, 3))
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.OVERDUE.name())
+                            .note("This is a note")
+                            .build());
+
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.GREEN.name())
+                            .dueDate(LocalDateTime.of(2022, 5, 18, 4, 3))
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.COMPLETED.name())
+                            .note("This is a note")
+                            .build());
+
+            // Future
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.RED.name())
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 1), LocalTime.MIDNIGHT))
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.PENDING.name())
+                            .note("This is a note")
+                            .build());
+
+            scheduleService.createSchedule(
+                    ScheduleRequest
+                            .builder()
+                            .email("student@gmail.com")
+                            .color(ScheduleColor.RED.name())
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 1), LocalTime.MIDNIGHT))
+                            .location("MS Teams")
+                            .title("This is a title")
+                            .status(ScheduleStatus.PENDING.name())
+                            .note("This is a note")
+                            .build());
+
         };
     }
 }

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateRatingUseCase implements BaseUseCase {
+public class CreateRatingUseCase implements BaseUseCase<RatingRequest, Rating> {
 
     private final RatingService ratingService;
 
     @Override
-    public Rating invoke(Object data) throws RuntimeException {
-        return ratingService.createRating((RatingRequest) data);
+    public Rating invoke(RatingRequest data) throws RuntimeException {
+        return ratingService.createRating(data);
     }
 }

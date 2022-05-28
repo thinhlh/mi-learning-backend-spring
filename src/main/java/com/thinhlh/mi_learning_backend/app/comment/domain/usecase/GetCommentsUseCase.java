@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class GetCommentsUseCase implements BaseUseCase {
+public class GetCommentsUseCase implements BaseUseCase<UUID, List<Comment>> {
 
     private final CommentService service;
 
     @Override
-    public List<Comment> invoke(Object lessonId) {
-        return service.getComments((UUID) lessonId);
+    public List<Comment> invoke(UUID data) throws RuntimeException {
+        return service.getComments(data);
     }
 }

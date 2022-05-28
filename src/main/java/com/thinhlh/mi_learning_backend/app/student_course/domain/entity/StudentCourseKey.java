@@ -1,8 +1,6 @@
-package com.thinhlh.mi_learning_backend.app.student_course.domain;
+package com.thinhlh.mi_learning_backend.app.student_course.domain.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -12,10 +10,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentCourseKey implements Serializable {
 
     private UUID studentId;
     private UUID courseId;
-
-
 }

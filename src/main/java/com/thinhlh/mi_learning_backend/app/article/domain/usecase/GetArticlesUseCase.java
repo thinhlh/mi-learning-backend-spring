@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class GetArticlesUseCase implements BaseUseCase {
+public class GetArticlesUseCase implements BaseUseCase<Object, List<Article>> {
 
     private final ArticleService service;
 

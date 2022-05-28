@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class GetLessonsUseCase implements BaseUseCase {
+public class GetLessonsUseCase implements BaseUseCase<UUID, List<LessonResponse>> {
 
     private final LessonService lessonService;
     private final LessonMapper mapper;
 
     @Override
-    public List<LessonResponse> invoke(Object data) throws RuntimeException {
-        return ListHelper.mapTo(lessonService.getAllLessonOfSection((UUID) data), mapper::toResponse);
+    public List<LessonResponse> invoke(UUID data) throws RuntimeException {
+        return ListHelper.mapTo(lessonService.getAllLessonOfSection(data), mapper::toResponse);
     }
 }

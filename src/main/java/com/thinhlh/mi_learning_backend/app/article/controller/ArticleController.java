@@ -2,12 +2,14 @@ package com.thinhlh.mi_learning_backend.app.article.controller;
 
 import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleMapper;
 import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleRequest;
+import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleResponse;
 import com.thinhlh.mi_learning_backend.app.article.domain.entity.Article;
 import com.thinhlh.mi_learning_backend.app.article.domain.usecase.CreateArticleUseCase;
 import com.thinhlh.mi_learning_backend.app.article.domain.usecase.GetArticlesUseCase;
 import com.thinhlh.mi_learning_backend.app.test.TestRepository;
 import com.thinhlh.mi_learning_backend.base.BaseController;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
+import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,11 +33,11 @@ public class ArticleController extends BaseController {
     private final TestRepository repository;
 
     @GetMapping("/articles")
-    private ResponseEntity<BaseResponse<List<Article>>> getArticles() {
+    private ResponseEntity<BaseResponse<List<ArticleResponse>>> getArticles() {
 
         var articles = getArticlesUseCase.invoke(null);
 
-        return successResponse(articles);
+        return successResponse(ListHelper.mapTo(articles, mapper::toArticleResponse));
     }
 
     @PostMapping("/article")

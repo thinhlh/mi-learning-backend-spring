@@ -10,6 +10,7 @@ import java.util.UUID;
 public class LessonResponse {
     private UUID id;
     private String title;
+    private int order;
     private VideoLessonResponse video;
     private TestLessonResponse test;
 }

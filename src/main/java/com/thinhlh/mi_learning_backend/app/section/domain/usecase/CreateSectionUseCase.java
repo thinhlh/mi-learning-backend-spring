@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class CreateSectionUseCase implements BaseUseCase {
+public class CreateSectionUseCase implements BaseUseCase<SectionRequest, Section> {
 
     private final SectionService sectionService;
 
     @Override
-    public Section invoke(Object data) throws RuntimeException {
-
-        return sectionService.createSection((SectionRequest) data);
+    public Section invoke(SectionRequest data) throws RuntimeException {
+        return sectionService.createSection(data);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GetCategoriesUseCase implements BaseUseCase {
+public class GetCategoriesUseCase implements BaseUseCase<Object, List<Category>> {
 
     private final CategoryService categoryService;
 

@@ -11,12 +11,12 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class GetSectionsUseCase implements BaseUseCase {
+public class GetSectionsUseCase implements BaseUseCase<UUID,List<Section>> {
 
     private final SectionService sectionService;
 
     @Override
-    public List<Section> invoke(Object data) throws RuntimeException {
-        return sectionService.getAllSections((UUID) data);
+    public List<Section> invoke(UUID data) throws RuntimeException {
+        return sectionService.getAllSections(data);
     }
 }

@@ -8,12 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateCourseUseCase implements BaseUseCase {
+public class CreateCourseUseCase implements BaseUseCase<Course, Course> {
 
     private final CourseService courseService;
 
+
     @Override
-    public Course invoke(Object data) throws RuntimeException {
-        return courseService.createCourse((Course) data);
+    public Course invoke(Course data) throws RuntimeException {
+        return courseService.createCourse(data);
     }
 }

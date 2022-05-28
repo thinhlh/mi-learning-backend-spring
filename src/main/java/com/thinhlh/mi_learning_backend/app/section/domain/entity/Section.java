@@ -5,12 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +18,9 @@ import java.util.UUID;
 @Table(name = "section")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Section {
     @Id
     @Column(name = "id", nullable = false)

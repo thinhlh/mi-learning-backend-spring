@@ -6,9 +6,12 @@ import com.thinhlh.mi_learning_backend.app.rating.controller.dto.RatingRequest;
 import com.thinhlh.mi_learning_backend.app.rating.data.repository.RatingRepository;
 import com.thinhlh.mi_learning_backend.app.rating.domain.entity.Rating;
 import com.thinhlh.mi_learning_backend.app.rating.domain.service.RatingService;
+import com.thinhlh.mi_learning_backend.app.student_course.data.repository.StudentCourseRepository;
+import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +21,7 @@ import java.util.UUID;
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository repository;
+    private final StudentCourseRepository studentCourseRepository;
     private final RatingMapper mapper;
 
     @Override
@@ -28,8 +32,8 @@ public class RatingServiceImpl implements RatingService {
 
         List<Integer> averageForEachStar = new ArrayList<>(5);
 
-        for (int i = 0; i < 5; i++) {
-            averageForEachStar.add(0, averagePercentageForEachStar(ratings, totalRatings, i + 1));
+        for (int i = 1; i <= 5; i++) {
+            averageForEachStar.add(averagePercentageForEachStar(ratings, totalRatings, i));
         }
 
 
@@ -45,9 +49,19 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    @Transactional
     public Rating createRating(RatingRequest request) {
+        var rating = mapper.toRating(request);
 
-        return null;
+        var studentCourse = studentCourseRepository.findByStudent_IdAndCourse_Id(request.getStudentId(), request.getCourseId());
+
+        if (studentCourse == null) {
+            throw new NotFoundException();
+        } else {
+            rating.setStudentCourse(studentCourse);
+        }
+
+        return repository.save(rating);
     }
 
     private Integer averagePercentageForEachStar(List<Rating> ratings, Integer totalRatings, Integer value) {
@@ -56,6 +70,6 @@ public class RatingServiceImpl implements RatingService {
                 .filter(rating -> rating.getValue().equals(value))
                 .toList()
                 .size()
-                / (totalRatings == 0 ? 1 : totalRatings) * 100;
+                * 100 / (totalRatings.doubleValue() == 0 ? 1 : totalRatings);
     }
 }

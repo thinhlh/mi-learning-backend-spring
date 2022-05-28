@@ -13,20 +13,17 @@ import java.util.UUID;
 
 @Entity
 @Setter
+@Getter
 public class Category {
     @Id
-    @Getter
     private UUID id;
 
-    @Getter
     @Column(unique = true)
     private String title;
 
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-    @Getter
     private Set<Course> courses = new LinkedHashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "category")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private Set<Article> articles = new LinkedHashSet<>();
 }

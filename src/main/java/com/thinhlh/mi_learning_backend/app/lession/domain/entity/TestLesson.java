@@ -14,6 +14,6 @@ public class TestLesson {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false, mappedBy = "testLesson")
+    @OneToOne(mappedBy = "testLesson", fetch = FetchType.LAZY, optional = false)
     private Lesson lesson;
 }

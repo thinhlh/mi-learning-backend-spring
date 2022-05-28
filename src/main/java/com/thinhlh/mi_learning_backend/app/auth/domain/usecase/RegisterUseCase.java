@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RegisterUseCase implements BaseUseCase {
+public class RegisterUseCase implements BaseUseCase<RegisterRequest, Object> {
 
     private final AuthService authService;
 
     @Override
-    public Object invoke(Object data) throws ConversionException {
-        authService.registerUser((RegisterRequest) data);
+    public Object invoke(RegisterRequest data) throws ConversionException {
+        authService.registerUser(data);
         return null;
     }
 }

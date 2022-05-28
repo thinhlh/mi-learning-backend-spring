@@ -12,7 +12,6 @@ public class CourseRatingResponse {
 
     private Double average;
     private List<Integer> ratingAverageByStar;
-    private List<Rating> ratings;
+    private List<RatingResponse> ratings;
     private Integer totalRating;
-
 }

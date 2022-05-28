@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface BaseUseCase {
-    Object invoke(Object data) throws RuntimeException;
+public interface BaseUseCase<Request, Response> {
+    Response invoke(Request data) throws RuntimeException;
 }

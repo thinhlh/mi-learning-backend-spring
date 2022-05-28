@@ -1,7 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.rating.domain.entity;
 
-import com.thinhlh.mi_learning_backend.app.student_course.domain.StudentCourse;
-import com.thinhlh.mi_learning_backend.app.user.domain.entity.User;
+import com.thinhlh.mi_learning_backend.app.student_course.domain.entity.StudentCourse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,12 +11,16 @@ import java.util.UUID;
 @Table(name = "rating")
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Rating {
 
     @Id
     @Column(name = "id")
     private UUID id;
 
+    @Lob
     @Column(name = "content")
     private String content;
 
@@ -26,6 +29,5 @@ public class Rating {
     private Integer value;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Getter(value = AccessLevel.NONE)
     private StudentCourse studentCourse;
 }

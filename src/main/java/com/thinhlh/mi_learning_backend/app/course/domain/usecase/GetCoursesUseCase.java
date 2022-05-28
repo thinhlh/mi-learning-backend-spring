@@ -14,14 +14,13 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GetCoursesUseCase implements BaseUseCase {
+public class GetCoursesUseCase implements BaseUseCase<String, List<CourseResponse>> {
 
     private final CourseService courseService;
-    private final CourseMapper mapper;
 
 
     @Override
-    public List<CourseResponse> invoke(Object data) throws RuntimeException {
-        return courseService.getAllCourses();
+    public List<CourseResponse> invoke(String email) throws RuntimeException {
+        return courseService.getAllCourses(email);
     }
 }

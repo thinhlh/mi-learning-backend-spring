@@ -32,4 +32,6 @@ public class ArticleRequest {
 
     @Past
     private LocalDate createdDate;
+
+    private String category;
 }

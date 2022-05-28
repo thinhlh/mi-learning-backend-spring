@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateCategoryUseCase implements BaseUseCase {
+public class CreateCategoryUseCase implements BaseUseCase<CategoryRequest, Category> {
 
     private final CategoryService categoryService;
 
     @Override
-    public Category invoke(Object data) throws RuntimeException {
-        return categoryService.createCategory((CategoryRequest) data
-        );
+    public Category invoke(CategoryRequest data) throws RuntimeException {
+        return categoryService.createCategory(data);
+
     }
 }

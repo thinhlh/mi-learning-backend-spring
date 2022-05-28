@@ -40,6 +40,6 @@ public class Article {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 }

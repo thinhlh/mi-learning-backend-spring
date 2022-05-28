@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateArticleUseCase implements BaseUseCase {
+public class CreateArticleUseCase implements BaseUseCase<ArticleRequest, Article> {
 
     private final ArticleService articleService;
 
     @Override
-    public Article invoke(Object data) throws RuntimeException {
-        return articleService.createArticle((ArticleRequest) data);
+    public Article invoke(ArticleRequest data) throws RuntimeException {
+        return articleService.createArticle(data);
     }
 }

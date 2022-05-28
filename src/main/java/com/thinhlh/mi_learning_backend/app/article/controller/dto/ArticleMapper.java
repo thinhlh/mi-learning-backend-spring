@@ -9,9 +9,11 @@ import java.util.UUID;
 
 @Mapper(componentModel = "spring", imports = {LocalDateTime.class, UUID.class})
 public interface ArticleMapper {
+    @Mapping(target = "category", source = "article.category.title")
     ArticleResponse toArticleResponse(Article article);
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "category", ignore = true)
     Article toArticle(ArticleRequest articleRequest);
 
 }

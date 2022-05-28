@@ -10,12 +10,12 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class GetCourseRatingsUseCase implements BaseUseCase {
+public class GetCourseRatingsUseCase implements BaseUseCase<UUID,CourseRatingResponse> {
 
     private final RatingService service;
 
     @Override
-    public CourseRatingResponse invoke(Object data) throws RuntimeException {
-        return service.getCourseRating((UUID) data);
+    public CourseRatingResponse invoke(UUID data) throws RuntimeException {
+        return service.getCourseRating(data);
     }
 }

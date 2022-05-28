@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LoginUseCase implements BaseUseCase {
+public class LoginUseCase implements BaseUseCase<LoginRequest,Tokens> {
 
     private final AuthService authService;
 
     @Override
-    public Tokens invoke(Object data) throws ConversionException {
-        return authService.loginUser((LoginRequest) data);
+    public Tokens invoke(LoginRequest data) throws RuntimeException {
+        return authService.loginUser(data);
     }
 }

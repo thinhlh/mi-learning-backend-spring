@@ -2,6 +2,7 @@ package com.thinhlh.mi_learning_backend.app.course.controller.dto;
 
 import com.thinhlh.mi_learning_backend.app.rating.controller.dto.CourseRatingResponse;
 import com.thinhlh.mi_learning_backend.app.section.domain.entity.Section;
+import com.thinhlh.mi_learning_backend.app.teacher.controller.dto.TeacherResponse;
 import lombok.Data;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public class CourseResponse {
     private String icon;
     private Double price;
     private String category;
+    private Boolean enrolled;
+
+    private TeacherResponse teacher;
 
     private List<Section> sections;
 

@@ -1,4 +1,4 @@
-package com.thinhlh.mi_learning_backend.app.student_course.domain;
+package com.thinhlh.mi_learning_backend.app.student_course.domain.entity;
 
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.rating.domain.entity.Rating;

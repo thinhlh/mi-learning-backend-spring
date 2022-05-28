@@ -3,6 +3,7 @@ package com.thinhlh.mi_learning_backend.app.student_lesson.domain.entity;
 import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
+import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -27,4 +28,6 @@ public class StudentLesson {
 
     @OneToMany(mappedBy = "studentLesson")
     private Set<Note> notes;
+
+    private boolean finished;
 }
