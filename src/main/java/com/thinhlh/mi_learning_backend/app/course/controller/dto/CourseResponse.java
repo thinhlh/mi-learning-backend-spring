@@ -19,6 +19,7 @@ public class CourseResponse {
     private Double price;
     private String category;
     private Boolean enrolled;
+    private UUID currentLesson;
 
     private TeacherResponse teacher;
 

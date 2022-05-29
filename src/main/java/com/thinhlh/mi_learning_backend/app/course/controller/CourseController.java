@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,12 +26,20 @@ public class CourseController extends BaseController {
     private final GetCourseDetailUseCase getCourseDetailUseCase;
     private final CreateCourseUseCase createCourseUseCase;
     private final GetMyCoursesUseCase getMyCoursesUseCase;
+    private final GetExplorerCoursesUseCase getExplorerCoursesUseCase;
     private final GetRecommendationCoursesUseCase getRecommendationCoursesUseCase;
 
 
     @GetMapping("/courses")
     ResponseEntity<BaseResponse<List<CourseResponse>>> getAllCourses(HttpServletRequest request) {
         return successResponse(getCoursesUseCase.invoke(ServletHelper
+                .retrieveUsernameAndRolesFromRequest(request, null)
+                .getFirst()));
+    }
+
+    @GetMapping("/courses/explorer")
+    ResponseEntity<BaseResponse<List<CourseResponse>>> getAllExplorerCourses(HttpServletRequest request) {
+        return successResponse(getExplorerCoursesUseCase.invoke(ServletHelper
                 .retrieveUsernameAndRolesFromRequest(request, null)
                 .getFirst()));
     }
@@ -68,6 +77,11 @@ public class CourseController extends BaseController {
                 .retrieveUsernameAndRolesFromRequest(request, null)
                 .getFirst()
         ));
+    }
+
+    @GetMapping("/course/detail")
+    private ResponseEntity<BaseResponse<List<>>> getCourseDetail(HttpServletRequest request, @RequestParam @NotNull UUID courseId){
+        return successResponse()
     }
 
 }

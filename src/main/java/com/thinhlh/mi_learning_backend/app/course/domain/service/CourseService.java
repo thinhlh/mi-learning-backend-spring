@@ -12,6 +12,8 @@ public interface CourseService {
 
     List<CourseResponse> getAllCourses(String email);
 
+    List<CourseResponse> getExplorerCourses(String email);
+
     Course createCourse(Course course);
 
     List<MyCourseResponse> getMyCourses(String email);

@@ -8,6 +8,7 @@ import com.thinhlh.mi_learning_backend.app.student.data.repository.StudentReposi
 import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
 import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
 import com.thinhlh.mi_learning_backend.app.teacher.domain.entity.Teacher;
+import com.thinhlh.mi_learning_backend.app.user.controller.dto.ChangePasswordRequest;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.UserDetailResponse;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.UserMapper;
 import com.thinhlh.mi_learning_backend.app.user.data.repository.UserRepository;
@@ -20,8 +21,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 @Service
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -105,5 +109,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             throw new NotFoundException(USER_NOT_FOUND);
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(ChangePasswordRequest request) {
+        var user = userRepository.findByEmail(request.getEmail());
+        if (user.isPresent()) {
+            var currentHashedPassword = user.get().getPassword();
+
+            if (passwordEncoder.matches(request.getCurrentPassword(),currentHashedPassword)) {
+                var hashedNewPassword = passwordEncoder.encode(request.getNewPassword());
+                user.get().setPassword(hashedNewPassword);
+                return true;
+            } else{
+                return false;
+            }
+
+        } else {
+            throw new NotFoundException(USER_NOT_FOUND);
+        }
+
     }
 }

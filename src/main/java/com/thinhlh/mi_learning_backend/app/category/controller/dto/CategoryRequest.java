@@ -13,4 +13,6 @@ public class CategoryRequest {
 
     @NotBlank
     private String title;
+
+    private String background;
 }

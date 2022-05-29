@@ -151,20 +151,21 @@ public class DataInitialization {
     @Order(5)
     CommandLineRunner initCategories() {
         return args -> {
-            new ArrayList<String>() {{
-                add("Flutter");
-                add("Python");
-                add("Web3");
-                add("IOS");
-                add("Django");
-                add("Fast API");
-                add("Machine Learning");
-                add("Architecture");
-            }}.forEach(title -> {
+            new LinkedHashMap<String, String>() {{
+                put("Flutter", "https://storage.googleapis.com/mi-learning.appspot.com/categories/flutter-course.jpeg");
+                put("Python", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python.png");
+                put("Web3", "https://storage.googleapis.com/mi-learning.appspot.com/categories/Solana.jpeg");
+                put("IOS", "https://storage.googleapis.com/mi-learning.appspot.com/categories/swift.webp");
+                put("Django", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python-django-logo.webp");
+                put("Fast API", "https://storage.googleapis.com/mi-learning.appspot.com/categories/fastapi.png");
+                put("Machine Learning", "https://storage.googleapis.com/mi-learning.appspot.com/categories/machine_learning_746x419.jpeg");
+                put("Architecture", "https://storage.googleapis.com/mi-learning.appspot.com/categories/amazon-academy-740x480.jpeg");
+            }}.forEach((title, background) -> {
                 categoryService.createCategory(
                         CategoryRequest
                                 .builder()
                                 .title(title)
+                                .background(background)
                                 .build());
             });
         };
@@ -747,11 +748,12 @@ public class DataInitialization {
 
             courses.forEach(courseService::createCourse);
 
+            var sections = initSections(courses);
+            initLessons(courses, sections);
 
             studentJoinCourse(courses);
             initRatings(courses);
-            var sections = initSections(courses);
-            initLessons(sections);
+
         };
     }
 
@@ -821,34 +823,41 @@ public class DataInitialization {
         return sections;
     }
 
-    void initLessons(List<Section> sections) {
+    void initLessons(List<Course> courses, List<Section> sections) {
 
-        var videoURLs = new ArrayList<String>() {{
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B1%5D%20%E2%80%93%20Explanation%20%26%20Project%20Structure.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B2%5D%20%E2%80%93%20Entities%20%26%20Use%20Cases.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B5%5D%20%E2%80%93%20Contracts%20of%20Data%20Sources.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B6%5D%20%E2%80%93%20Repository%20Implementation.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B7%5D%20%E2%80%93%20Network%20Info.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B8%5D%20%E2%80%93%20Local%20Data%20Source.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B9%5D%20%E2%80%93%20Remote%20Data%20Source.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B10%5D%20%E2%80%93%20Bloc%20Scaffolding%20%26%20Input%20Conversion.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B11%5D%20%E2%80%93%20Bloc%20Implementation%201_2.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B12%5D%20%E2%80%93%20Bloc%20Implementation%202_2.mp4");
-            add("https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B13%5D%20%E2%80%93%20Dependency%20Injection.mp4");
+        var videoURLs = new LinkedHashMap<String, String>() {{
+            put("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B1%5D%20%E2%80%93%20Explanation%20%26%20Project%20Structure.mp4");
+            put("Flutter TDD Clean Architecture Course [2] – Entities & Use Cases", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B2%5D%20%E2%80%93%20Entities%20%26%20Use%20Cases.mp4");
+            put("Flutter TDD Clean Architecture Course [3] – Domain Layer Refactoring", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
+            put("Flutter TDD Clean Architecture Course [4] – Data Layer Overview & Models", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
+            put("Flutter TDD Clean Architecture Course [5] – Contracts of Data Sources", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B5%5D%20%E2%80%93%20Contracts%20of%20Data%20Sources.mp4");
+            put("Flutter TDD Clean Architecture Course [6] – Repository Implementation", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B6%5D%20%E2%80%93%20Repository%20Implementation.mp4");
+            put("Flutter TDD Clean Architecture Course [7] – Network Info", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B7%5D%20%E2%80%93%20Network%20Info.mp4");
+            put("Flutter TDD Clean Architecture Course [8] – Local Data Source", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B8%5D%20%E2%80%93%20Local%20Data%20Source.mp4");
+            put("Flutter TDD Clean Architecture Course [9] – Remote Data Source", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B9%5D%20%E2%80%93%20Remote%20Data%20Source.mp4");
+            put("Flutter TDD Clean Architecture Course [10] – Bloc Scaffolding & Input Conversion", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B10%5D%20%E2%80%93%20Bloc%20Scaffolding%20%26%20Input%20Conversion.mp4");
+            put("Flutter TDD Clean Architecture Course [11] – Bloc Implementation 1/2", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B11%5D%20%E2%80%93%20Bloc%20Implementation%201_2.mp4");
+            put("Flutter TDD Clean Architecture Course [12] – Bloc Implementation 2/2", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B12%5D%20%E2%80%93%20Bloc%20Implementation%202_2.mp4");
+            put("Flutter TDD Clean Architecture Course [13] – Dependency Injection", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B13%5D%20%E2%80%93%20Dependency%20Injection.mp4");
+            put("Flutter TDD Clean Architecture Course [14] – User Interface", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B14%5D%20%E2%80%93%20User%20Interface.mp4");
         }};
 
-        sections.forEach(section ->
-                lessonService.createLesson(
-                        LessonRequest
-                                .builder()
-                                .isVideo(new Random().nextBoolean())
-                                .title("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure")
-                                .videoUrl(videoURLs.get(new Random().nextInt(0, videoURLs.size())))
-                                .length(new Random().nextInt(0, 60 * 60 + 1))
-                                .sectionId(section.getId())
-                                .build())
+
+        sections.forEach(section -> {
+                    for (int i = 0; i < videoURLs.size(); i++) {
+                        lessonService.createLesson(
+                                LessonRequest
+                                        .builder()
+                                        .isVideo(true)
+                                        .lessonOrder(i)
+                                        .title(videoURLs.entrySet().stream().toList().get(i).getKey())
+                                        .videoUrl(videoURLs.entrySet().stream().toList().get(i).getValue())
+                                        .length(new Random().nextInt(0, 60 * 60 + 1))
+                                        .sectionId(section.getId())
+                                        .build());
+                    }
+                }
+
         );
     }
 

@@ -1,13 +1,16 @@
 package com.thinhlh.mi_learning_backend.app.student.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.Schedule;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.entity.StudentCourse;
+import com.thinhlh.mi_learning_backend.app.student_lesson.domain.entity.StudentLesson;
 import com.thinhlh.mi_learning_backend.app.user.domain.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,4 +34,8 @@ public class Student {
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     @Getter
     private Set<Schedule> schedules = new LinkedHashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lesson")
+    @JsonIgnore
+    private List<StudentLesson> lessons;
 }

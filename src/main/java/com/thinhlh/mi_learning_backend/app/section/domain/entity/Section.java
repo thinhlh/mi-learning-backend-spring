@@ -31,7 +31,7 @@ public class Section {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
-    @Getter(value = AccessLevel.NONE)
+    @JsonIgnore
     private Course course;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "section")

@@ -15,13 +15,16 @@ import com.thinhlh.mi_learning_backend.app.student.data.repository.StudentReposi
 import com.thinhlh.mi_learning_backend.app.student_course.data.repository.StudentCourseRepository;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.entity.StudentCourse;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.entity.StudentCourseKey;
+import com.thinhlh.mi_learning_backend.app.student_lesson.domain.entity.StudentLesson;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,9 +54,24 @@ public class CourseServiceImpl implements CourseService {
         return courseResponses;
     }
 
+    @Override
+    @Transactional
+    public List<CourseResponse> getExplorerCourses(String email) {
+        return getAllCourses(email).stream().filter(courseResponse -> courseResponse.getEnrolled() == false).collect(Collectors.toList());
+    }
+
     private CourseResponse getCourseResponse(Course course, String email) {
         var enrolled = studentCourseRepository.existsByStudent_User_EmailAndCourseId(email, course.getId());
-        return mapper.toResponse(course, ratingService.getCourseRating(course.getId()), enrolled);
+
+        var finishedLesson = studentLessonRepository.findAllByStudent_User_EmailAndFinishedTrue(email);
+
+        var finishedLessonOfCourse = finishedLesson.stream().filter(studentLesson ->
+                studentLesson.getLesson().getSection().getCourse().getId().equals(course.getId())
+        ).sorted(Comparator.comparing(o -> o.getLesson().getLessonOrder())).toList();
+
+        var lastFinishedCourse = finishedLessonOfCourse.stream().toList().stream().findFirst().orElse(null);
+
+        return mapper.toResponse(course, ratingService.getCourseRating(course.getId()), enrolled, lastFinishedCourse == null ? null : lastFinishedCourse.getLesson().getId());
     }
 
     @Override
@@ -68,22 +86,38 @@ public class CourseServiceImpl implements CourseService {
         var enrolledCourses = studentCourseRepository.findAllByStudent_User_Email(email);
 
         enrolledCourses.stream().map(StudentCourse::getCourse).forEach(course -> {
-            AtomicLong totalLesson = new AtomicLong();
-            AtomicLong lessonFinished = new AtomicLong();
+            var lessonFinishedAndTotalLesson = getLessonFinishedAndTotalLesson(course, email);
 
-            var sections = sectionRepository.findAllByCourse_Id(course.getId());
-
-            sections.forEach(section -> {
-                section.getLessons().forEach(lesson -> {
-                    totalLesson.addAndGet(1);
-                    lessonFinished.addAndGet(studentLessonRepository.countAllByStudent_User_EmailAndFinishedIsTrue(email));
-                });
-            });
-
-            result.add(mapper.toMyCourseResponse(course, totalLesson.get(), lessonFinished.get(), "Last lesson"));
+            result.add(
+                    mapper.toMyCourseResponse(
+                            course,
+                            lessonFinishedAndTotalLesson.getFirst(),
+                            lessonFinishedAndTotalLesson.getSecond(),
+                            "Last lesson")
+            );
         });
 
         return result;
+    }
+
+    private Pair<Long, Long> getLessonFinishedAndTotalLesson(Course course, String email) {
+        AtomicLong totalLesson = new AtomicLong();
+        AtomicLong lessonFinished = new AtomicLong();
+
+        var sections = sectionRepository.findAllByCourse_Id(course.getId());
+
+        var lessonsFinishedIds = studentLessonRepository.findAllByStudent_User_EmailAndFinishedTrue(email).stream().map(studentLesson -> studentLesson.getLesson().getId()).toList();
+
+        sections.forEach(section -> {
+            section.getLessons().forEach(lesson -> {
+                totalLesson.addAndGet(1);
+                if (lessonsFinishedIds.contains(lesson.getId())) {
+                    lessonFinished.addAndGet(1);
+                }
+            });
+        });
+
+        return Pair.of(lessonFinished.get(), totalLesson.get());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.lession.domain.service;
 
 import com.thinhlh.mi_learning_backend.app.lession.controller.dto.LessonRequest;
+import com.thinhlh.mi_learning_backend.app.lession.controller.dto.LessonResponse;
 import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
 
 import java.util.List;

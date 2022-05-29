@@ -21,10 +21,10 @@ public interface CourseMapper {
 
     @Mapping(target = "courseRatings", source = "ratings")
     @Mapping(target = "category", source = "course.category.title")
-    CourseResponse toResponse(Course course, CourseRatingResponse ratings, boolean enrolled);
+    CourseResponse toResponse(Course course, CourseRatingResponse ratings, boolean enrolled, UUID currentLesson);
 
 
-    MyCourseResponse toMyCourseResponse(Course course, Long totalLesson, Long lessonsFinished, String currentLessonTitle);
+    MyCourseResponse toMyCourseResponse(Course course, Long lessonsFinished, Long totalLesson, String currentLessonTitle);
 
     @Mapping(target = "teacherName", source = "teacherName")
     @Mapping(target = "rating", source = "rating")

@@ -46,7 +46,7 @@ public class Course {
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
     private Set<Section> sections;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)

@@ -22,8 +22,12 @@ public class Category {
     private String title;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @JsonIgnore
     private Set<Course> courses = new LinkedHashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @JsonIgnore
     private Set<Article> articles = new LinkedHashSet<>();
+
+    private String background;
 }

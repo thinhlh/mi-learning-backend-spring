@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface LessonMapper {
 
 
+    @Mapping(target = "order", source = "lessonOrder")
     @Mapping(target = "video", source = "videoLesson")
     @Mapping(target = "test", source = "testLesson")
     LessonResponse toResponse(Lesson lesson);
