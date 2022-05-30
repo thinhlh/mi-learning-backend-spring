@@ -21,7 +21,7 @@ public interface CourseMapper {
 
     @Mapping(target = "courseRatings", source = "ratings")
     @Mapping(target = "category", source = "course.category.title")
-    CourseResponse toResponse(Course course, CourseRatingResponse ratings, boolean enrolled, UUID currentLesson);
+    CourseResponse toResponse(Course course, CourseRatingResponse ratings, boolean enrolled, UUID currentLesson, boolean saved);
 
 
     MyCourseResponse toMyCourseResponse(Course course, Long lessonsFinished, Long totalLesson, String currentLessonTitle);

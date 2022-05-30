@@ -4,6 +4,10 @@ import com.thinhlh.mi_learning_backend.app.auth.controller.dto.AuthMapper;
 import com.thinhlh.mi_learning_backend.app.auth.controller.dto.RegisterRequest;
 import com.thinhlh.mi_learning_backend.app.role.data.repository.RoleRepository;
 import com.thinhlh.mi_learning_backend.app.role.domain.entity.Role;
+import com.thinhlh.mi_learning_backend.app.schedule.controller.dto.ScheduleRequest;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.ScheduleColor;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.ScheduleStatus;
+import com.thinhlh.mi_learning_backend.app.schedule.domain.service.ScheduleService;
 import com.thinhlh.mi_learning_backend.app.student.data.repository.StudentRepository;
 import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
 import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
@@ -25,7 +29,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
 
+    private final ScheduleService scheduleService;
     private final AuthMapper authMapper;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -97,7 +104,87 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             // Admin
         }
 
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        initSchedules(user.getEmail());
+    }
+
+
+    private void initSchedules(String email) {
+        // TODAY
+        scheduleService.createSchedule(
+                ScheduleRequest
+                        .builder()
+                        .email(email)
+                        .color(ScheduleColor.values()[new Random().nextInt(0, 7)].name())
+                        .dueDate(LocalDateTime.now())
+                        .location("Microsoft Teams - msjkl")
+                        .title("Taking an online test at Microsoft Teams")
+                        .status(ScheduleStatus.values()[new Random().nextInt(0, 3)].name())
+                        .note("This is a note. Remember to bring your own calculator. We don 't have any responsibility to resolve your problem during the test.")
+                        .build());
+
+        ScheduleRequest
+                .builder()
+                .email(email)
+                .color(ScheduleColor.values()[new Random().nextInt(0, 7)].name())
+                .dueDate(LocalDateTime.now())
+                .location("Online")
+                .title("Double check the mark")
+                .status(ScheduleStatus.values()[new Random().nextInt(0, 3)].name())
+                .note("There is no exception when forget this event.")
+                .build();
+
+        ScheduleRequest
+                .builder()
+                .email(email)
+                .color(ScheduleColor.values()[new Random().nextInt(0, 7)].name())
+                .dueDate(LocalDateTime.now())
+                .location("Home")
+                .title("Taking your E-Learning exercise")
+                .status(ScheduleStatus.values()[new Random().nextInt(0, 3)].name())
+                .note("This is a note. Remember to bring your own calculator. We don 't have any responsibility to resolve your problem during the test.")
+                .build();
+
+        scheduleService.createSchedule(
+                ScheduleRequest
+                        .builder()
+                        .email(email)
+                        .color(ScheduleColor.values()[new Random().nextInt(0, 7)].name())
+                        .dueDate(
+                                LocalDateTime.of(
+                                        2022,
+                                        new Random().nextInt(4, 7),
+                                        new Random().nextInt(1, 30),
+                                        new Random().nextInt(1, 23),
+                                        new Random().nextInt(0, 60)
+                                )
+                        )
+                        .location("Home")
+                        .title("Finish 4 exercises")
+                        .status(ScheduleStatus.values()[new Random().nextInt(0, 3)].name())
+                        .note("Do all your homework before due date.")
+                        .build());
+
+        scheduleService.createSchedule(
+                ScheduleRequest
+                        .builder()
+                        .email(email)
+                        .color(ScheduleColor.values()[new Random().nextInt(0, 7)].name())
+                        .dueDate(
+                                LocalDateTime.of(
+                                        2022,
+                                        new Random().nextInt(4, 7),
+                                        new Random().nextInt(1, 30),
+                                        new Random().nextInt(1, 23),
+                                        new Random().nextInt(0, 60)
+                                )
+                        )
+                        .location("School")
+                        .title("Go to school please.")
+                        .status(ScheduleStatus.values()[new Random().nextInt(0, 3)].name())
+                        .note("Also bring your note book.")
+                        .build());
     }
 
     @Override
@@ -118,11 +205,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user.isPresent()) {
             var currentHashedPassword = user.get().getPassword();
 
-            if (passwordEncoder.matches(request.getCurrentPassword(),currentHashedPassword)) {
+            if (passwordEncoder.matches(request.getCurrentPassword(), currentHashedPassword)) {
                 var hashedNewPassword = passwordEncoder.encode(request.getNewPassword());
                 user.get().setPassword(hashedNewPassword);
                 return true;
-            } else{
+            } else {
                 return false;
             }
 

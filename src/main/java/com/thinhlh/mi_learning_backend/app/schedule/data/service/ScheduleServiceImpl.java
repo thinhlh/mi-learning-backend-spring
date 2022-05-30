@@ -7,6 +7,7 @@ import com.thinhlh.mi_learning_backend.app.schedule.data.repository.ScheduleRepo
 import com.thinhlh.mi_learning_backend.app.schedule.domain.entity.Schedule;
 import com.thinhlh.mi_learning_backend.app.schedule.domain.service.ScheduleService;
 import com.thinhlh.mi_learning_backend.app.student.data.repository.StudentRepository;
+import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final ScheduleMapper mapper;
 
     @Override
@@ -30,12 +32,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         var schedule = mapper.toSchedule(scheduleRequest);
         var student = studentRepository.findByUser_Email(scheduleRequest.getEmail());
 
-        schedule.setStudent(student);
-        schedule = scheduleRepository.save(schedule);
+        if (student != null) {
+            schedule.setStudent(student);
 
-        student.getSchedules().add(schedule);
+            schedule = scheduleRepository.save(schedule);
 
-        return schedule;
+            student.getSchedules().add(schedule);
+
+            return schedule;
+        }
+        return null;
     }
 
     @Override

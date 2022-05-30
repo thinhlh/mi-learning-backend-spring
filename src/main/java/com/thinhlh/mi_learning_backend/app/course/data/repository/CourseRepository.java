@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CourseRepository extends CrudRepository<Course, UUID> {
-    List<Course> findByStudents_Student_Id(UUID id);
 
     List<Course> findByIdIsNotIn(Collection<UUID> ids);
+
+    List<Course> findByIdNotIn(Collection<UUID> ids);
+
 
 }

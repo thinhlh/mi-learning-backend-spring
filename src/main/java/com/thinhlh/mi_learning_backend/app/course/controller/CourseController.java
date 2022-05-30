@@ -28,6 +28,7 @@ public class CourseController extends BaseController {
     private final GetMyCoursesUseCase getMyCoursesUseCase;
     private final GetExplorerCoursesUseCase getExplorerCoursesUseCase;
     private final GetRecommendationCoursesUseCase getRecommendationCoursesUseCase;
+    private final GetSavedCoursesUseCase getSavedCoursesUseCase;
 
 
     @GetMapping("/courses")
@@ -79,9 +80,12 @@ public class CourseController extends BaseController {
         ));
     }
 
-    @GetMapping("/course/detail")
-    private ResponseEntity<BaseResponse<List<>>> getCourseDetail(HttpServletRequest request, @RequestParam @NotNull UUID courseId){
-        return successResponse()
+    @GetMapping("/courses/saved")
+    private ResponseEntity<BaseResponse<List<CourseResponse>>> getSavedCourse(HttpServletRequest request) {
+        return successResponse(getSavedCoursesUseCase.invoke(ServletHelper
+                .retrieveUsernameAndRolesFromRequest(request, null)
+                .getFirst()
+        ));
     }
 
 }

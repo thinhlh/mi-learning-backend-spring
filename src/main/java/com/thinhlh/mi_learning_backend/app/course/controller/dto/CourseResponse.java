@@ -20,6 +20,7 @@ public class CourseResponse {
     private String category;
     private Boolean enrolled;
     private UUID currentLesson;
+    private boolean saved;
 
     private TeacherResponse teacher;
 

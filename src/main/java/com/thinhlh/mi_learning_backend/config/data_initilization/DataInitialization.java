@@ -1,7 +1,6 @@
 package com.thinhlh.mi_learning_backend.config.data_initilization;
 
 import com.thinhlh.mi_learning_backend.app.article.controller.dto.ArticleRequest;
-import com.thinhlh.mi_learning_backend.app.article.domain.entity.Article;
 import com.thinhlh.mi_learning_backend.app.article.domain.service.ArticleService;
 import com.thinhlh.mi_learning_backend.app.auth.controller.dto.RegisterRequest;
 import com.thinhlh.mi_learning_backend.app.auth.domain.service.AuthService;
@@ -9,13 +8,11 @@ import com.thinhlh.mi_learning_backend.app.category.controller.dto.CategoryReque
 import com.thinhlh.mi_learning_backend.app.category.domain.service.CategoryService;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.course.domain.service.CourseService;
-import com.thinhlh.mi_learning_backend.app.lession.controller.dto.LessonRequest;
-import com.thinhlh.mi_learning_backend.app.lession.domain.service.LessonService;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonRequest;
+import com.thinhlh.mi_learning_backend.app.lesson.domain.service.LessonService;
 import com.thinhlh.mi_learning_backend.app.rating.controller.dto.RatingRequest;
 import com.thinhlh.mi_learning_backend.app.rating.data.repository.RatingRepository;
-import com.thinhlh.mi_learning_backend.app.rating.domain.entity.Rating;
 import com.thinhlh.mi_learning_backend.app.rating.domain.service.RatingService;
-import com.thinhlh.mi_learning_backend.app.role.data.repository.RoleRepository;
 import com.thinhlh.mi_learning_backend.app.role.domain.entity.Role;
 import com.thinhlh.mi_learning_backend.app.role.domain.service.RoleService;
 import com.thinhlh.mi_learning_backend.app.schedule.controller.dto.ScheduleRequest;
@@ -27,7 +24,6 @@ import com.thinhlh.mi_learning_backend.app.section.domain.entity.Section;
 import com.thinhlh.mi_learning_backend.app.section.domain.service.SectionService;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.service.StudentCourseService;
 import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
-import com.thinhlh.mi_learning_backend.app.teacher.domain.entity.Teacher;
 import com.thinhlh.mi_learning_backend.app.user.domain.service.UserService;
 import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
@@ -103,6 +99,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
+                            .avatar("https://source.unsplash.com/random/?avatar")
                             .build()
             );
 
@@ -114,6 +111,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
+                            .avatar("https://source.unsplash.com/random/?avatar")
                             .build()
             );
 
@@ -125,6 +123,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
+                            .avatar("https://source.unsplash.com/random/?avatar")
                             .build()
             );
         };
@@ -142,6 +141,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.student.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.student.name())
+                            .avatar("https://source.unsplash.com/random/?avatar")
                             .build()
             );
         };
@@ -152,14 +152,24 @@ public class DataInitialization {
     CommandLineRunner initCategories() {
         return args -> {
             new LinkedHashMap<String, String>() {{
-                put("Flutter", "https://storage.googleapis.com/mi-learning.appspot.com/categories/flutter-course.jpeg");
-                put("Python", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python.png");
-                put("Web3", "https://storage.googleapis.com/mi-learning.appspot.com/categories/Solana.jpeg");
-                put("IOS", "https://storage.googleapis.com/mi-learning.appspot.com/categories/swift.webp");
-                put("Django", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python-django-logo.webp");
-                put("Fast API", "https://storage.googleapis.com/mi-learning.appspot.com/categories/fastapi.png");
-                put("Machine Learning", "https://storage.googleapis.com/mi-learning.appspot.com/categories/machine_learning_746x419.jpeg");
-                put("Architecture", "https://storage.googleapis.com/mi-learning.appspot.com/categories/amazon-academy-740x480.jpeg");
+//                put("Flutter", "https://storage.googleapis.com/mi-learning.appspot.com/categories/flutter-course.jpeg");
+//                put("Python", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python.png");
+//                put("Web3", "https://storage.googleapis.com/mi-learning.appspot.com/categories/Solana.jpeg");
+//                put("IOS", "https://storage.googleapis.com/mi-learning.appspot.com/categories/swift.webp");
+//                put("Django", "https://storage.googleapis.com/mi-learning.appspot.com/categories/python-django-logo.webp");
+//                put("Fast API", "https://storage.googleapis.com/mi-learning.appspot.com/categories/fastapi.png");
+//                put("Machine Learning", "https://storage.googleapis.com/mi-learning.appspot.com/categories/machine_learning_746x419.jpeg");
+//                put("Architecture", "https://storage.googleapis.com/mi-learning.appspot.com/categories/amazon-academy-740x480.jpeg");
+//                https://docs.flutter.dev/assets/images/flutter-logo-sharing.png
+
+                put("Flutter", "https://docs.flutter.dev/assets/images/flutter-logo-sharing.png");
+                put("Python", "https://vietnix.vn/wp-content/uploads/2021/07/python-la-gi.webp");
+                put("Web3", "https://assets.entrepreneur.com/content/3x2/2000/1652275872-new34.jpg");
+                put("IOS", "https://developer.apple.com/swift/images/swift-og.png");
+                put("Django", "https://www.tma.vn/Media/Default/BaiDang/6-2.jpg");
+                put("Fast API", "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png");
+                put("Machine Learning", "https://funix.edu.vn/wp-content/uploads/2021/08/machine-learning.jpg");
+                put("Architecture", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/800px-Amazon_Web_Services_Logo.svg.png");
             }}.forEach((title, background) -> {
                 categoryService.createCategory(
                         CategoryRequest
@@ -726,7 +736,7 @@ public class DataInitialization {
                 add(Course.builder()
                         .id(UUID.randomUUID())
                         .title("Complete Machine Learning & Data Science Bootcamp 2022")
-                        .background("https://img-c.udemycdn.com/course/240x135/950390_270f_3.jpg")
+                        .background("https://funix.edu.vn/wp-content/uploads/2021/08/machine-learning.jpg")
                         .description("Learn Data Science, Data Analysis, Machine Learning (Artificial Intelligence) and Python with Tensorflow, Pandas & more!")
                         .length(16 * 60 * 60)
                         .category(categories.get(6))
@@ -737,7 +747,7 @@ public class DataInitialization {
                 add(Course.builder()
                         .id(UUID.randomUUID())
                         .title("Bayesian Machine Learning in Python: A/B Testing")
-                        .background("https://img-c.udemycdn.com/course/480x270/3693164_f87d_3.jpg")
+                        .background("https://goldinlocks.github.io/Introduction-to-A-B-testing-in-python/abpro.png")
                         .description("This course is all about A/B testing. A/B testing is used everywhere. Marketing, retail, newsfeeds, online advertising, and more. A/B testing is all about comparing things. If you’re a data scientist, and you want to tell the rest of the company, “logo A is better than logo B”, well you can’t just say that without proving it using numbers and statistics. Traditional A/B testing has been around for a long time, and it’s full of approximations and confusing definitions. In this course, while we will do traditional A/B testing in order to appreciate its complexity, what we will eventually get to is the Bayesian machine learning way of doing things.")
                         .length(10 * 60 * 60)
                         .category(categories.get(6))
@@ -798,7 +808,7 @@ public class DataInitialization {
         }};
 
         for (int i = 0; i < courses.size() - 1; i++) {
-            for (int j = 0; j < new Random().nextInt(0, contents.size()); j++) {
+            for (int j = 0; j < new Random().nextInt(1, contents.size()); j++) {
                 ratingService.createRating(RatingRequest.builder()
                         .courseId(courses.get(i).getId())
                         .value(new Random().nextInt(1, 6))
@@ -826,7 +836,7 @@ public class DataInitialization {
     void initLessons(List<Course> courses, List<Section> sections) {
 
         var videoURLs = new LinkedHashMap<String, String>() {{
-            put("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B1%5D%20%E2%80%93%20Explanation%20%26%20Project%20Structure.mp4");
+            put("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure", "https://drive.google.com/file/d/1_Cv2uQpic7StIaKlHGirhjGegJl6s1gy/view?usp=sharing");
             put("Flutter TDD Clean Architecture Course [2] – Entities & Use Cases", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B2%5D%20%E2%80%93%20Entities%20%26%20Use%20Cases.mp4");
             put("Flutter TDD Clean Architecture Course [3] – Domain Layer Refactoring", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
             put("Flutter TDD Clean Architecture Course [4] – Data Layer Overview & Models", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");

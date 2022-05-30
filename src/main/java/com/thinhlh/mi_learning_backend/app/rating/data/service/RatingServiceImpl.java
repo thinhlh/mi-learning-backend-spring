@@ -56,7 +56,7 @@ public class RatingServiceImpl implements RatingService {
         var studentCourse = studentCourseRepository.findByStudent_IdAndCourse_Id(request.getStudentId(), request.getCourseId());
 
         if (studentCourse == null) {
-            throw new NotFoundException();
+//            throw new NotFoundException();
         } else {
             rating.setStudentCourse(studentCourse);
         }

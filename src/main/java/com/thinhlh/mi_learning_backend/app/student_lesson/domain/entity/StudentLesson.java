@@ -1,7 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.student_lesson.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
+import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
 import lombok.*;

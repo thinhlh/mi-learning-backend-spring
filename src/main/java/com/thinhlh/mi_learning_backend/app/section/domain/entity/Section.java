@@ -1,15 +1,11 @@
 package com.thinhlh.mi_learning_backend.app.section.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
-import com.thinhlh.mi_learning_backend.app.lession.domain.entity.Lesson;
+import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;

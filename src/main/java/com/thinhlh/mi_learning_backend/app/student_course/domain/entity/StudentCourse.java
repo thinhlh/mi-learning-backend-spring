@@ -30,4 +30,10 @@ public class StudentCourse {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "studentCourse")
     private Set<Rating> ratings;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean saved;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean enrolled;
 }

@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -14,6 +15,8 @@ public class Note {
     private UUID id;
 
     private String content;
+
+    private int createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private StudentLesson studentLesson;
