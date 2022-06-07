@@ -836,7 +836,7 @@ public class DataInitialization {
     void initLessons(List<Course> courses, List<Section> sections) {
 
         var videoURLs = new LinkedHashMap<String, String>() {{
-            put("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure", "https://drive.google.com/file/d/1_Cv2uQpic7StIaKlHGirhjGegJl6s1gy/view?usp=sharing");
+            put("Flutter TDD Clean Architecture Course [1] – Explanation & Project Structure", "https://storage.googleapis.com/favorable-logic-351800.appspot.com/Flutter%20Firebase%20%26%20DDD%20Course%20%5B1%5D%20%E2%80%93%20Domain-Driven%20Design%20Principles.mp4");
             put("Flutter TDD Clean Architecture Course [2] – Entities & Use Cases", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B2%5D%20%E2%80%93%20Entities%20%26%20Use%20Cases.mp4");
             put("Flutter TDD Clean Architecture Course [3] – Domain Layer Refactoring", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
             put("Flutter TDD Clean Architecture Course [4] – Data Layer Overview & Models", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B3%5D%20%E2%80%93%20Domain%20Layer%20Refactoring.mp4");
