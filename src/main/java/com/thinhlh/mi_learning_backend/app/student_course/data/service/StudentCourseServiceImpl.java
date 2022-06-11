@@ -77,6 +77,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     }
 
     @Override
+    @Transactional
     public Boolean checkStudentEnrolledCourse(String email, UUID courseId) {
         var studentCourse = studentCourseRepository.findByStudent_User_EmailAndCourse_Id(email, courseId);
 
@@ -84,6 +85,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     }
 
     @Override
+    @Transactional
     public StudentCourseResponse getStudentCourseDetail(GetStudentCourseDetailParams params) {
 
         var courseOptional = courseRepository.findById(params.getCourseId());
