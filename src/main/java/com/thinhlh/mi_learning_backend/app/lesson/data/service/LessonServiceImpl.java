@@ -1,10 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.lesson.data.service;
 
 import com.thinhlh.mi_learning_backend.app.course.domain.service.CourseService;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailRequest;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailResponse;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonMapper;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonRequest;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.*;
 import com.thinhlh.mi_learning_backend.app.lesson.data.repository.LessonRepository;
 import com.thinhlh.mi_learning_backend.app.lesson.data.repository.StudentLessonRepository;
 import com.thinhlh.mi_learning_backend.app.lesson.data.repository.TestLessonRepository;
@@ -13,13 +10,17 @@ import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.TestLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.VideoLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.service.LessonService;
+import com.thinhlh.mi_learning_backend.app.note.data.repository.NoteRepository;
+import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.app.section.data.repository.SectionRepository;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -118,7 +119,5 @@ public class LessonServiceImpl implements LessonService {
         } else {
             throw new NotFoundException(LESSON_NOT_FOUND);
         }
-
-
     }
 }

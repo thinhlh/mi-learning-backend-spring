@@ -1,12 +1,11 @@
 package com.thinhlh.mi_learning_backend.app.lesson.controller;
 
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailRequest;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailResponse;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonRequest;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonResponse;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.*;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.CreateLessonUseCase;
+import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.CreateNoteUseCase;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.GetLessonDetailUseCase;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.GetLessonsUseCase;
+import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.base.BaseController;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
 import com.thinhlh.mi_learning_backend.helper.ServletHelper;
@@ -27,6 +26,7 @@ public class LessonController extends BaseController {
     private final GetLessonsUseCase getLessonsUseCase;
     private final CreateLessonUseCase createLessonUseCase;
     private final GetLessonDetailUseCase getLessonDetailUseCase;
+    private final CreateNoteUseCase createNoteUseCase;
 
     @GetMapping("/lessons")
     private ResponseEntity<BaseResponse<List<LessonResponse>>> getLessonsBySection(@RequestParam UUID sectionId) {
@@ -46,6 +46,14 @@ public class LessonController extends BaseController {
                                 ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst(),
                                 lessonId)
                 )
+        );
+    }
+
+    @PostMapping("/note")
+    private ResponseEntity<BaseResponse<Note>> createNote(@RequestBody CreateNoteRequest createNoteRequest, HttpServletRequest request) {
+        createNoteRequest.setEmail(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst());
+        return successResponse(
+                createNoteUseCase.invoke(createNoteRequest)
         );
     }
 

@@ -136,7 +136,7 @@ public class DataInitialization {
             authService.registerUser(
                     RegisterRequest.builder()
                             .name("Hoang Thinh")
-                            .password("hoangthinh")
+                            .password("hoangthinh@gmail.com")
                             .email("hoangthinh@gmail.com")
                             .occupation(Role.RoleName.student.name())
                             .birthday(LocalDate.now())
