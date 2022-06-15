@@ -79,6 +79,7 @@ public class DataInitialization {
                                 .password(roleName.name())
                                 .email(roleName.name() + "@gmail.com")
                                 .occupation(roleName.name())
+                                .avatar("https://source.unsplash.com/random/1080x720/?avatar&sig=" + new Random().nextInt(0, 1000))
                                 .birthday(LocalDate.now())
                                 .role(roleName.name())
                                 .build()
@@ -99,7 +100,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
-                            .avatar("https://source.unsplash.com/random/?avatar")
+                            .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
                             .build()
             );
 
@@ -111,7 +112,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
-                            .avatar("https://source.unsplash.com/random/?avatar")
+                            .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
                             .build()
             );
 
@@ -123,7 +124,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.teacher.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.teacher.name())
-                            .avatar("https://source.unsplash.com/random/?avatar")
+                            .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
                             .build()
             );
         };
