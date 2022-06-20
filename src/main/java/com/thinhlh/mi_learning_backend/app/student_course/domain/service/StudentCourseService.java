@@ -1,6 +1,5 @@
 package com.thinhlh.mi_learning_backend.app.student_course.domain.service;
 
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.CourseResponse;
 import com.thinhlh.mi_learning_backend.app.student_course.controller.dto.StudentCourseResponse;
 import com.thinhlh.mi_learning_backend.app.student_course.controller.dto.ToggleSaveCourseRequest;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.usecase.GetStudentCourseDetailParams;

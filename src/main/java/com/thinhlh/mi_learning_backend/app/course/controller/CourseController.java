@@ -2,7 +2,9 @@ package com.thinhlh.mi_learning_backend.app.course.controller;
 
 import com.thinhlh.mi_learning_backend.app.course.controller.dto.*;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
+import com.thinhlh.mi_learning_backend.app.course.domain.entity.GetCourseType;
 import com.thinhlh.mi_learning_backend.app.course.domain.usecase.*;
+import com.thinhlh.mi_learning_backend.app.course.domain.entity.CourseResponseV2;
 import com.thinhlh.mi_learning_backend.base.BaseController;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
 import com.thinhlh.mi_learning_backend.helper.ServletHelper;
@@ -12,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,69 +24,38 @@ public class CourseController extends BaseController {
 
     private final CourseMapper mapper;
     private final GetCoursesUseCase getCoursesUseCase;
-    private final GetCourseDetailUseCase getCourseDetailUseCase;
     private final CreateCourseUseCase createCourseUseCase;
-    private final GetMyCoursesUseCase getMyCoursesUseCase;
-    private final GetExplorerCoursesUseCase getExplorerCoursesUseCase;
-    private final GetRecommendationCoursesUseCase getRecommendationCoursesUseCase;
-    private final GetSavedCoursesUseCase getSavedCoursesUseCase;
 
-
-    @GetMapping("/courses")
-    ResponseEntity<BaseResponse<List<CourseResponse>>> getAllCourses(HttpServletRequest request) {
-        return successResponse(getCoursesUseCase.invoke(ServletHelper
-                .retrieveUsernameAndRolesFromRequest(request, null)
-                .getFirst()));
-    }
-
-    @GetMapping("/courses/explorer")
-    ResponseEntity<BaseResponse<List<CourseResponse>>> getAllExplorerCourses(HttpServletRequest request) {
-        return successResponse(getExplorerCoursesUseCase.invoke(ServletHelper
-                .retrieveUsernameAndRolesFromRequest(request, null)
-                .getFirst()));
-    }
+    private final GetCourseDetailUseCase getCourseDetailUseCase;
 
     @PostMapping("/course")
     ResponseEntity<BaseResponse<Course>> createCourse(@Valid @RequestBody CourseRequest courseRequest) {
         return successResponse(createCourseUseCase.invoke(mapper.toCourse(courseRequest)));
     }
 
-    @GetMapping("/course")
-    ResponseEntity<BaseResponse<CourseResponse>> getCourseResponse(HttpServletRequest request, @RequestParam @NotBlank UUID courseId) {
-        return successResponse(getCourseDetailUseCase.invoke(new GetCourseDetailParams(
-                courseId,
-                ServletHelper
-                        .retrieveUsernameAndRolesFromRequest(request, null)
-                        .getFirst()
-        )));
-    }
-
-    @GetMapping("/courses/me")
-    private ResponseEntity<BaseResponse<List<MyCourseResponse>>> getMyCourses(HttpServletRequest request) {
-
+    @GetMapping("/courses")
+    ResponseEntity<BaseResponse<List<CourseResponseV2>>> getCourses(@Valid @RequestParam GetCourseType type, HttpServletRequest request) {
         return successResponse(
-                getMyCoursesUseCase.invoke(
-                        ServletHelper
-                                .retrieveUsernameAndRolesFromRequest(request, null)
-                                .getFirst()
+                getCoursesUseCase.invoke(
+                        new GetCourseParams(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null)
+                                .getFirst(),
+                                type
+                        )
                 )
         );
     }
 
-    @GetMapping("/courses/recommend")
-    private ResponseEntity<BaseResponse<List<RecommendationCourseResponse>>> getRecommendationCourses(HttpServletRequest request) {
-        return successResponse(getRecommendationCoursesUseCase.invoke(ServletHelper
-                .retrieveUsernameAndRolesFromRequest(request, null)
-                .getFirst()
-        ));
-    }
-
-    @GetMapping("/courses/saved")
-    private ResponseEntity<BaseResponse<List<CourseResponse>>> getSavedCourse(HttpServletRequest request) {
-        return successResponse(getSavedCoursesUseCase.invoke(ServletHelper
-                .retrieveUsernameAndRolesFromRequest(request, null)
-                .getFirst()
-        ));
+    @GetMapping("/course/detail")
+    ResponseEntity<BaseResponse<CourseResponseV2>> getCourseDetail(@Valid @RequestParam @NotEmpty UUID courseId, HttpServletRequest request) {
+        return successResponse(
+                getCourseDetailUseCase.invoke(
+                        new GetCourseDetailParams(
+                                courseId,
+                                ServletHelper.retrieveUsernameAndRolesFromRequest(request, null)
+                                        .getFirst()
+                        )
+                )
+        );
     }
 
 }

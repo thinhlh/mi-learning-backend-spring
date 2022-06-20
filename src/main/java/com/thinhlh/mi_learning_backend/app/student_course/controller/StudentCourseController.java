@@ -23,24 +23,8 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class StudentCourseController extends BaseController {
-    private final GetStudentCourseDetailUseCase getStudentCourseDetailUseCase;
     private final ToggleSaveCourseUseCase toggleSaveCourseUseCase;
     private final StudentCourseService studentCourseService;
-
-    @GetMapping("/course/detail")
-    private ResponseEntity<BaseResponse<StudentCourseResponse>> getCourseDetail(HttpServletRequest request, @RequestParam @NotNull UUID courseId) {
-        return successResponse(
-                getStudentCourseDetailUseCase.invoke(
-                        new GetStudentCourseDetailParams(
-                                ServletHelper.retrieveUsernameAndRolesFromRequest(
-                                        request,
-                                        null
-                                ).getFirst(),
-                                courseId
-                        )
-                )
-        );
-    }
 
     @PostMapping("/course/save")
     private ResponseEntity<BaseResponse<Boolean>> toggleSaveCourse(HttpServletRequest request, @RequestBody @Valid ToggleSaveCourseRequest toggleSaveCourseRequest) {

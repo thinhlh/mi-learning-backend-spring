@@ -1,32 +1,30 @@
 package com.thinhlh.mi_learning_backend.app.course.data.service;
 
 import com.thinhlh.mi_learning_backend.app.course.controller.dto.CourseMapper;
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.CourseResponse;
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.MyCourseResponse;
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.RecommendationCourseResponse;
 import com.thinhlh.mi_learning_backend.app.course.data.repository.CourseRepository;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
 import com.thinhlh.mi_learning_backend.app.course.domain.service.CourseService;
+import com.thinhlh.mi_learning_backend.app.course.domain.usecase.GetCourseDetailParams;
+import com.thinhlh.mi_learning_backend.app.course.domain.usecase.GetCourseParams;
+import com.thinhlh.mi_learning_backend.app.course.domain.entity.CourseResponseV2;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailRequest;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailResponse;
 import com.thinhlh.mi_learning_backend.app.lesson.data.repository.LessonRepository;
 import com.thinhlh.mi_learning_backend.app.lesson.data.repository.StudentLessonRepository;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.rating.domain.service.RatingService;
-import com.thinhlh.mi_learning_backend.app.section.data.repository.SectionRepository;
-import com.thinhlh.mi_learning_backend.app.student.data.repository.StudentRepository;
+import com.thinhlh.mi_learning_backend.app.student_course.controller.dto.StudentCourseLessonResponse;
+import com.thinhlh.mi_learning_backend.app.student_course.controller.dto.StudentCourseMetaDataResponse;
+import com.thinhlh.mi_learning_backend.app.student_course.controller.dto.StudentCourseSectionResponse;
 import com.thinhlh.mi_learning_backend.app.student_course.data.repository.StudentCourseRepository;
-import com.thinhlh.mi_learning_backend.app.student_course.domain.entity.StudentCourse;
-import com.thinhlh.mi_learning_backend.app.student_course.domain.service.StudentCourseService;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -38,8 +36,6 @@ public class CourseServiceImpl implements CourseService {
     private final String COURSE_NOT_FOUND = "Course not found";
 
     private final CourseRepository courseRepository;
-    private final SectionRepository sectionRepository;
-    private final StudentRepository studentRepository;
     private final LessonRepository lessonRepository;
     private final StudentLessonRepository studentLessonRepository;
     private final StudentCourseRepository studentCourseRepository;
@@ -48,95 +44,73 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<CourseResponse> getAllCourses(String email) {
-        List<CourseResponse> courseResponses = new ArrayList<>();
-        ListHelper.toList(courseRepository.findAll()).forEach(course -> {
-            courseResponses.add(getCourseResponse(course, email));
-        });
+    public List<CourseResponseV2> getCourses(GetCourseParams params) {
+        var allCourses =
+                ListHelper
+                        .toList(
+                                courseRepository
+                                        .findAll())
+                        .stream()
+                        .map(course -> getCourseDetail(new GetCourseDetailParams(course.getId(), params.getEmail())))
+                        .toList();
 
-        return courseResponses;
-    }
+        switch (params.getType()) {
+            case ALL -> {
+                return allCourses;
+            }
+            case ME -> {
+                return allCourses
+                        .stream()
+                        .filter(it -> checkStudentEnrolledCourse(params.getEmail(), it.getId()))
+                        .toList();
+            }
+            case FOR_YOU -> {
+                return allCourses
+                        .stream()
+                        .filter(it -> !checkStudentEnrolledCourse(params.getEmail(), it.getId()))
+                        .toList();
+            }
+            case SAVED -> {
+                return allCourses
+                        .stream()
+                        .filter(it -> checkCourseSaved(params.getEmail(), it.getId()))
+                        .toList();
+            }
+            case TOP_CHARTS -> {
+                return allCourses
+                        .stream()
+                        .sorted((o1, o2) ->
+                                o2
+                                        .getCourseRatings()
+                                        .getAverage()
+                                        .compareTo(o1
+                                                .getCourseRatings()
+                                                .getAverage())
+                        ).toList();
 
-    @Override
-    @Transactional
-    public List<CourseResponse> getSavedCourses(String email) {
-        List<CourseResponse> courseResponses = new ArrayList<>();
-        ListHelper.toList(courseRepository.findAll()).forEach(course -> {
-            if (checkStudentEnrolledCourse(email, course.getId()))
-                courseResponses.add(getCourseResponse(course, email));
-        });
+            }
 
-        return courseResponses;
-    }
+            case TEACHER_CHOICE -> {
+                var notEnrolledCourses = new ArrayList<CourseResponseV2>() {{
+                    addAll(allCourses
+                            .stream()
+                            .filter(it -> !checkStudentEnrolledCourse(params.getEmail(), it.getId()))
+                            .toList());
+                }};
+                Collections.shuffle(notEnrolledCourses);
 
-    @Override
-    @Transactional
-    public List<CourseResponse> getExplorerCourses(String email) {
-        return getAllCourses(email).stream().filter(courseResponse -> !courseResponse.getEnrolled()).collect(Collectors.toList());
-    }
+                return notEnrolledCourses;
+            }
 
-    private CourseResponse getCourseResponse(Course course, String email) {
-
-        var enrolled = checkStudentEnrolledCourse(email, course.getId());
-        var studentCourse = studentCourseRepository.findByStudent_User_EmailAndCourse_Id(email, course.getId());
-        var saved = studentCourse != null && studentCourse.isSaved();
-
-        return mapper.toResponse(
-                course,
-                ratingService.getCourseRating(
-                        course.getId()
-                ),
-                enrolled,
-                enrolled ? getLastFinishedLessonInCourse(course.getId(), email).getId() : null,
-                saved
-        );
+            default -> {
+                return new ArrayList<>();
+            }
+        }
     }
 
     @Override
     public Course createCourse(Course course) {
         return courseRepository.save(course);
-    }
-
-    @Override
-    @Transactional
-    public List<MyCourseResponse> getMyCourses(String email) {
-        List<MyCourseResponse> result = new ArrayList<>();
-        var enrolledCourses = studentCourseRepository.findAllByStudent_User_Email(email);
-
-        enrolledCourses.stream().map(StudentCourse::getCourse).forEach(course -> {
-            var lessonFinishedAndTotalLesson = getLessonFinishedAndTotalLesson(course, email);
-
-            result.add(
-                    mapper.toMyCourseResponse(
-                            course,
-                            lessonFinishedAndTotalLesson.getFirst(),
-                            lessonFinishedAndTotalLesson.getSecond(),
-                            "Last lesson")
-            );
-        });
-
-        return result;
-    }
-
-
-    private Pair<Long, Long> getLessonFinishedAndTotalLesson(Course course, String email) {
-        AtomicLong totalLesson = new AtomicLong();
-        AtomicLong lessonFinished = new AtomicLong();
-
-        var sections = sectionRepository.findAllByCourse_Id(course.getId());
-
-        var lessonsFinishedIds = studentLessonRepository.findAllByStudent_User_EmailAndFinishedTrue(email).stream().map(studentLesson -> studentLesson.getLesson().getId()).toList();
-
-        sections.forEach(section -> {
-            section.getLessons().forEach(lesson -> {
-                totalLesson.addAndGet(1);
-                if (lessonsFinishedIds.contains(lesson.getId())) {
-                    lessonFinished.addAndGet(1);
-                }
-            });
-        });
-
-        return Pair.of(lessonFinished.get(), totalLesson.get());
     }
 
     private boolean checkStudentEnrolledCourse(String email, UUID courseId) {
@@ -147,51 +121,118 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<RecommendationCourseResponse> getRecommendationCourses(String email) {
-        var student = studentRepository.findByUser_Email(email);
+    public CourseResponseV2 getCourseDetail(GetCourseDetailParams params) {
+        var course = courseRepository.findById(params.getCourseId()).orElse(null);
+        if (course == null) {
+            throw new NotFoundException(COURSE_NOT_FOUND);
+        } else {
+            var courseResponse = mapper.toCourseResponseV2(course);
 
-        var coursesStudentEnrolled = ListHelper.toList(
-                courseRepository.findAll()).stream().filter(
-                course -> checkStudentEnrolledCourse(email, course.getId())
-        ).toList().stream().map(Course::getId).toList();
+            var email = params.getEmail();
+            var enrolled = checkStudentEnrolledCourse(email, course.getId());
+            var saved = checkCourseSaved(email, course.getId());
 
-//        var coursesStudentNotEnrolled = courseRepository.findByIdNotIn(ListHelper.mapTo(coursesStudentEnrolled, Course::getId));
+            courseResponse.setEnrolled(enrolled);
+            courseResponse.setSaved(saved);
 
-        var allCourse = ListHelper.toList(courseRepository.findAll());
-        var coursesStudentNotEnrolled = new ArrayList<Course>();
+            var courseRatings = ratingService.getCourseRating(course.getId());
+            courseResponse.setCourseRatings(courseRatings);
 
-        allCourse.forEach(course -> {
-            if (!coursesStudentEnrolled.contains(course.getId())) {
-                coursesStudentNotEnrolled.add(course);
-            }
-        });
+            var lesson = getLastFinishedLessonInCourse(course.getId(), email);
+            courseResponse.setCurrentLesson(lesson == null ? null : lesson.getId());
 
+            courseResponse.setSections(getStudentCourseSectionResponse(course, email));
 
-        var result = new ArrayList<RecommendationCourseResponse>();
-
-        coursesStudentNotEnrolled.forEach(course -> {
-            var teacherName = course.getTeacher().getUser().getName();
-            var rating = ratingService.getCourseRating(course.getId()).getAverage();
-            result.add(mapper.toRecommendation(course, teacherName, rating));
-        });
-
-        return result;
+            return courseResponse;
+        }
     }
 
-    @Override
-    @Transactional
-    public CourseResponse getCourseDetail(UUID courseId, String email) {
-        var course = courseRepository.findById(courseId);
-        if (course.isPresent()) {
-            course.get().getSections();
-            return getCourseResponse(course.get(), email);
+    private Boolean checkCourseSaved(String email, UUID courseId) {
+        var studentCourse = studentCourseRepository.findByStudent_User_EmailAndCourse_Id(email, courseId);
+
+        return studentCourse != null && studentCourse.isSaved();
+    }
+
+    private List<StudentCourseSectionResponse> getStudentCourseSectionResponse(Course course, String email) {
+        return course.getSections().stream().map(section -> {
+            AtomicInteger totalLesson = new AtomicInteger(0);
+            AtomicInteger finishedLesson = new AtomicInteger(0);
+            AtomicLong length = new AtomicLong(0);
+
+            return StudentCourseSectionResponse.builder()
+                    .id(section.getId())
+                    .title(section.getTitle())
+                    .lessons(section.getLessons().stream().sorted(Comparator.comparing(Lesson::getLessonOrder)).map(lesson -> {
+                        var lessonDetail = getLessonDetail(new LessonDetailRequest(email, lesson.getId()));
+                        if (lesson.getVideoLesson() != null) {
+                            length.addAndGet(lesson.getVideoLesson().getLength());
+                        }
+                        totalLesson.addAndGet(1);
+                        if (lessonDetail.isFinished()) finishedLesson.addAndGet(1);
+                        return StudentCourseLessonResponse
+                                .builder()
+                                .id(lesson.getId())
+                                .lessonOrder(lesson.getLessonOrder())
+                                .testLesson(lesson.getTestLesson())
+                                .videoLesson(lesson.getVideoLesson())
+                                .title(lesson.getTitle())
+                                .metadata(StudentCourseMetaDataResponse
+                                        .builder()
+                                        .finished(lessonDetail.isFinished())
+                                        .notes(lessonDetail.getNotes())
+                                        .build())
+                                .build();
+                    }).collect(Collectors.toList()))
+                    .totalLesson(totalLesson.get())
+                    .finishedLesson(finishedLesson.get())
+                    .length(length.get())
+                    .build();
+        }).toList();
+    }
+
+    private LessonDetailResponse getLessonDetail(LessonDetailRequest request) {
+        var lessonOptional = lessonRepository.findById(request.getLessonId());
+
+        if (lessonOptional.isPresent()) {
+            var lesson = lessonOptional.get();
+            var studentLesson = studentLessonRepository.findByStudent_User_EmailAndLessonId(request.getEmail(), request.getLessonId());
+
+            if (studentLesson != null) {
+                var courseId = lesson.getSection().getCourse().getId();
+
+                var lessonsInCourse = getLessonsInCourse(courseId);
+                lessonsInCourse.sort(Comparator.comparing(Lesson::getLessonOrder));
+                var lastViewedLesson = getLastFinishedLessonInCourse(courseId, request.getEmail());
+
+
+                var response = LessonDetailResponse
+                        .builder()
+                        .courseId(lesson.getSection().getCourse().getId())
+                        .sectionId(lesson.getSection().getId())
+                        .lesson(lesson)
+                        .notes(studentLesson.getNotes().stream().toList())
+                        .finished(lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
+                        .build();
+
+                return response;
+            } else {
+                return LessonDetailResponse
+                        .builder()
+                        .courseId(lesson.getSection().getCourse().getId())
+                        .sectionId(lesson.getSection().getId())
+                        .lesson(lesson)
+                        .notes(new ArrayList<>())
+                        .finished(false)
+                        .build();
+            }
+
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("Lesson not found.");
         }
     }
 
     @Override
-    public List<Lesson> getLessonInCourse(UUID courseId) {
+    public List<Lesson> getLessonsInCourse(UUID courseId) {
         var lessons = new ArrayList<Lesson>();
 
         var courseOpt = courseRepository.findById(courseId);
@@ -209,7 +250,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Lesson getLastFinishedLessonInCourse(UUID courseId, String email) {
-        var lessonsInCourse = getLessonInCourse(courseId);
+        var lessonsInCourse = getLessonsInCourse(courseId);
         AtomicReference<Lesson> lastFinishedLesson = new AtomicReference<>(null);
 
         lessonsInCourse.forEach(lesson -> {

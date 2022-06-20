@@ -1,14 +1,17 @@
 package com.thinhlh.mi_learning_backend.app.user.controller;
 
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.ChangePasswordRequest;
+import com.thinhlh.mi_learning_backend.app.user.controller.dto.UpdateUserProfileRequest;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.UserDetailResponse;
 import com.thinhlh.mi_learning_backend.app.user.domain.usecase.ChangePasswordUseCase;
 import com.thinhlh.mi_learning_backend.app.user.domain.usecase.GetUserDetailUseCase;
+import com.thinhlh.mi_learning_backend.app.user.domain.usecase.UpdateUserProfileUseCase;
 import com.thinhlh.mi_learning_backend.base.BaseController;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
 import com.thinhlh.mi_learning_backend.helper.ServletHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +27,7 @@ public class UserController extends BaseController {
 
     private final GetUserDetailUseCase getUserDetailUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
+    private final UpdateUserProfileUseCase updateUserProfileUseCase;
 
     @GetMapping("/user/me")
     private ResponseEntity<BaseResponse<UserDetailResponse>> getUserDetail(HttpServletRequest request) {
@@ -41,8 +45,12 @@ public class UserController extends BaseController {
 
         changePasswordRequest.setEmail(email);
         return successResponse(changePasswordUseCase.invoke(changePasswordRequest));
-
     }
 
+    @PostMapping("profile/update")
+    private ResponseEntity<BaseResponse<UserDetailResponse>> updateProfile(HttpServletRequest request, @RequestBody @Validated UpdateUserProfileRequest updateUserProfileRequest) {
+        updateUserProfileRequest.setEmail(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst());
 
+        return successResponse(updateUserProfileUseCase.invoke(updateUserProfileRequest));
+    }
 }

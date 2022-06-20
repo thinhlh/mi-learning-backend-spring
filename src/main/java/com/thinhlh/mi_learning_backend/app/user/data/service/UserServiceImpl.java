@@ -13,6 +13,7 @@ import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
 import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
 import com.thinhlh.mi_learning_backend.app.teacher.domain.entity.Teacher;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.ChangePasswordRequest;
+import com.thinhlh.mi_learning_backend.app.user.controller.dto.UpdateUserProfileRequest;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.UserDetailResponse;
 import com.thinhlh.mi_learning_backend.app.user.controller.dto.UserMapper;
 import com.thinhlh.mi_learning_backend.app.user.data.repository.UserRepository;
@@ -29,7 +30,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -217,5 +220,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new NotFoundException(USER_NOT_FOUND);
         }
 
+    }
+
+    @Override
+    @Transactional
+    public UserDetailResponse updateUserProfile(UpdateUserProfileRequest request) {
+        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
+
+        if (user == null) {
+            throw new NotFoundException(USER_NOT_FOUND);
+        } else {
+            try {
+                if (request.getName() != null) user.setName(request.getName());
+                if (request.getAvatar() != null) user.setAvatar(request.getAvatar());
+                if (request.getOccupation() != null) user.setOccupation(request.getOccupation());
+                if (request.getBirthday() != null)
+                    user.setBirthday(LocalDate.from(LocalDateTime.parse(request.getBirthday(), DateTimeFormatter.ISO_LOCAL_DATE)));
+            } catch (Exception ignored) {
+
+            }
+        }
+        return userMapper.toUserDetailResponse(user);
     }
 }

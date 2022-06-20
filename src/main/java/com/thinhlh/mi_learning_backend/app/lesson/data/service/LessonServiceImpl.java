@@ -10,17 +10,13 @@ import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.TestLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.VideoLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.service.LessonService;
-import com.thinhlh.mi_learning_backend.app.note.data.repository.NoteRepository;
-import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.app.section.data.repository.SectionRepository;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -97,7 +93,7 @@ public class LessonServiceImpl implements LessonService {
             if (studentLesson != null) {
                 var courseId = lesson.getSection().getCourse().getId();
 
-                var lessonsInCourse = courseService.getLessonInCourse(courseId);
+                var lessonsInCourse = courseService.getLessonsInCourse(courseId);
                 lessonsInCourse.sort(Comparator.comparing(Lesson::getLessonOrder));
                 var lastViewedLesson = courseService.getLastFinishedLessonInCourse(courseId, request.getEmail());
 

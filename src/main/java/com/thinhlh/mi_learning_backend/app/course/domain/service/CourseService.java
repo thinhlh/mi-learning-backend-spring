@@ -1,9 +1,9 @@
 package com.thinhlh.mi_learning_backend.app.course.domain.service;
 
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.CourseResponse;
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.MyCourseResponse;
-import com.thinhlh.mi_learning_backend.app.course.controller.dto.RecommendationCourseResponse;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
+import com.thinhlh.mi_learning_backend.app.course.domain.usecase.GetCourseDetailParams;
+import com.thinhlh.mi_learning_backend.app.course.domain.usecase.GetCourseParams;
+import com.thinhlh.mi_learning_backend.app.course.domain.entity.CourseResponseV2;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 
 import java.util.List;
@@ -11,21 +11,13 @@ import java.util.UUID;
 
 public interface CourseService {
 
-    List<CourseResponse> getAllCourses(String email);
-
-    List<CourseResponse> getSavedCourses(String email);
-
-    List<CourseResponse> getExplorerCourses(String email);
+    List<CourseResponseV2> getCourses(GetCourseParams params);
 
     Course createCourse(Course course);
 
-    List<MyCourseResponse> getMyCourses(String email);
+    CourseResponseV2 getCourseDetail(GetCourseDetailParams params);
 
-    List<RecommendationCourseResponse> getRecommendationCourses(String email);
-
-    CourseResponse getCourseDetail(UUID courseId, String email);
-
-    List<Lesson> getLessonInCourse(UUID courseId);
+    List<Lesson> getLessonsInCourse(UUID courseId);
 
     // Return lesson Id
     Lesson getLastFinishedLessonInCourse(UUID courseId, String email);

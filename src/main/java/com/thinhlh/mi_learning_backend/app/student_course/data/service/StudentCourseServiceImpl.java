@@ -108,7 +108,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
                     AtomicLong length = new AtomicLong(0);
 
                     return StudentCourseSectionResponse.builder()
-                            .sectionId(section.getId())
+                            .id(section.getId())
                             .title(section.getTitle())
                             .lessons(section.getLessons().stream().sorted(Comparator.comparing(Lesson::getLessonOrder)).map(lesson -> {
                                 var lessonDetail = lessonService.getLessonDetail(new LessonDetailRequest(params.getEmail(), lesson.getId()));
@@ -119,7 +119,7 @@ public class StudentCourseServiceImpl implements StudentCourseService {
                                 if (lessonDetail.isFinished()) finishedLesson.addAndGet(1);
                                 return StudentCourseLessonResponse
                                         .builder()
-                                        .lessonId(lesson.getId())
+                                        .id(lesson.getId())
                                         .lessonOrder(lesson.getLessonOrder())
                                         .testLesson(lesson.getTestLesson())
                                         .videoLesson(lesson.getVideoLesson())
