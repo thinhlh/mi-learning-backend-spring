@@ -4,5 +4,5 @@ import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.CreateNoteReque
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 
 public interface NoteService {
-    Note createNote(CreateNoteRequest request);
+    Note createOrUpdateNote(CreateNoteRequest request);
 }

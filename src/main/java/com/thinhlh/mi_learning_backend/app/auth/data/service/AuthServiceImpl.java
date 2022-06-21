@@ -8,6 +8,7 @@ import com.thinhlh.mi_learning_backend.app.auth.domain.service.AuthService;
 import com.thinhlh.mi_learning_backend.app.role.data.repository.RoleRepository;
 import com.thinhlh.mi_learning_backend.app.role.domain.entity.Role;
 import com.thinhlh.mi_learning_backend.app.user.data.repository.UserRepository;
+import com.thinhlh.mi_learning_backend.app.user.domain.entity.User;
 import com.thinhlh.mi_learning_backend.app.user.domain.service.UserService;
 import com.thinhlh.mi_learning_backend.exceptions.CustomAuthenticationException;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
@@ -33,9 +34,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void registerUser(RegisterRequest request) {
+    public User registerUser(RegisterRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        userService.createUser(request);
+        return userService.createUser(request);
     }
 
     @Override

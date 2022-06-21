@@ -1,5 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.course.data.service;
 
+import com.thinhlh.mi_learning_backend.app.category.domain.service.CategoryService;
 import com.thinhlh.mi_learning_backend.app.course.controller.dto.CourseMapper;
 import com.thinhlh.mi_learning_backend.app.course.data.repository.CourseRepository;
 import com.thinhlh.mi_learning_backend.app.course.domain.entity.Course;
@@ -40,6 +41,8 @@ public class CourseServiceImpl implements CourseService {
     private final StudentLessonRepository studentLessonRepository;
     private final StudentCourseRepository studentCourseRepository;
     private final RatingService ratingService;
+
+    private final CategoryService categoryService;
     private final CourseMapper mapper;
 
     @Override
@@ -53,31 +56,24 @@ public class CourseServiceImpl implements CourseService {
                         .stream()
                         .map(course -> getCourseDetail(new GetCourseDetailParams(course.getId(), params.getEmail())))
                         .toList();
+        var filterCourses = new ArrayList<CourseResponseV2>();
+        if (params.getType() != null) {
+            filterCourses.addAll(switch (params.getType()) {
+                case ALL -> allCourses;
 
-        switch (params.getType()) {
-            case ALL -> {
-                return allCourses;
-            }
-            case ME -> {
-                return allCourses
+                case ME -> allCourses
                         .stream()
                         .filter(it -> checkStudentEnrolledCourse(params.getEmail(), it.getId()))
                         .toList();
-            }
-            case FOR_YOU -> {
-                return allCourses
+                case FOR_YOU -> allCourses
                         .stream()
                         .filter(it -> !checkStudentEnrolledCourse(params.getEmail(), it.getId()))
                         .toList();
-            }
-            case SAVED -> {
-                return allCourses
+                case SAVED -> allCourses
                         .stream()
                         .filter(it -> checkCourseSaved(params.getEmail(), it.getId()))
                         .toList();
-            }
-            case TOP_CHARTS -> {
-                return allCourses
+                case TOP_CHARTS -> allCourses
                         .stream()
                         .sorted((o1, o2) ->
                                 o2
@@ -88,24 +84,27 @@ public class CourseServiceImpl implements CourseService {
                                                 .getAverage())
                         ).toList();
 
-            }
+                case TEACHER_CHOICE -> {
+                    var notEnrolledCourses = new ArrayList<CourseResponseV2>() {{
+                        addAll(allCourses
+                                .stream()
+                                .filter(it -> !checkStudentEnrolledCourse(params.getEmail(), it.getId()))
+                                .toList());
+                    }};
+                    Collections.shuffle(notEnrolledCourses);
 
-            case TEACHER_CHOICE -> {
-                var notEnrolledCourses = new ArrayList<CourseResponseV2>() {{
-                    addAll(allCourses
-                            .stream()
-                            .filter(it -> !checkStudentEnrolledCourse(params.getEmail(), it.getId()))
-                            .toList());
-                }};
-                Collections.shuffle(notEnrolledCourses);
+                    yield notEnrolledCourses;
 
-                return notEnrolledCourses;
-            }
-
-            default -> {
-                return new ArrayList<>();
-            }
+                }
+            });
         }
+
+        if (params.getCategoryId() != null) {
+            var category = categoryService.getCategoryById(params.getCategoryId());
+            filterCourses = allCourses.stream().filter((it) -> it.getCategory().equals(category.getTitle())).collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        return filterCourses;
     }
 
     @Override

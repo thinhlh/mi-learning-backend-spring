@@ -3,10 +3,7 @@ package com.thinhlh.mi_learning_backend.app.note.domain.entity;
 import com.thinhlh.mi_learning_backend.app.student_lesson.domain.entity.StudentLesson;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -20,6 +17,7 @@ public class Note {
     @Id
     private UUID id;
 
+    @Lob
     private String content;
 
     private int createdAt;

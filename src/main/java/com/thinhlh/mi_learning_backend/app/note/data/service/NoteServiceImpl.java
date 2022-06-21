@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class NoteServiceImpl implements NoteService {
@@ -21,14 +23,26 @@ public class NoteServiceImpl implements NoteService {
     private final LessonMapper lessonMapper;
 
     @Override
-    public Note createNote(CreateNoteRequest request) {
-        var studentLesson = studentLessonRepository.findByStudent_User_EmailAndLessonId(request.getEmail(), request.getLessonId());
+    @Transactional
+    public Note createOrUpdateNote(CreateNoteRequest request) {
+        Note note;
+        if (request.getId() != null) {
+            note = noteRepository.findById(request.getId()).orElse(null);
 
-        if (studentLesson != null) {
-            var note = lessonMapper.createNoteRequestToNote(request);
-            note.setStudentLesson(studentLesson);
+            if (note != null) {
+                note.setContent(request.getContent());
+            }
+        } else {
+            var studentLesson = studentLessonRepository.findByStudent_User_EmailAndLessonId(request.getEmail(), request.getLessonId());
 
-            return noteRepository.save(note);
-        } else throw new NotFoundException();
+            if (studentLesson != null) {
+                note = lessonMapper.createNoteRequestToNote(request);
+                note.setStudentLesson(studentLesson);
+
+                return noteRepository.save(note);
+            } else throw new NotFoundException();
+        }
+
+        return note;
     }
 }

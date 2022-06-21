@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void createUser(RegisterRequest request) {
+    public com.thinhlh.mi_learning_backend.app.user.domain.entity.User createUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new ObjectAlreadyExistsException(USER_ALREADY_REGISTERED);
 
@@ -110,6 +110,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user = userRepository.save(user);
 
         initSchedules(user.getEmail());
+
+        return user;
     }
 
 

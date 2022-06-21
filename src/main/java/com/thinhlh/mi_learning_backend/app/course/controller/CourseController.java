@@ -34,12 +34,16 @@ public class CourseController extends BaseController {
     }
 
     @GetMapping("/courses")
-    ResponseEntity<BaseResponse<List<CourseResponseV2>>> getCourses(@Valid @RequestParam GetCourseType type, HttpServletRequest request) {
+    ResponseEntity<BaseResponse<List<CourseResponseV2>>> getCourses(
+            @Valid @RequestParam(required = false) GetCourseType type,
+            @Valid @RequestParam(required = false) UUID categoryId,
+            HttpServletRequest request) {
         return successResponse(
                 getCoursesUseCase.invoke(
                         new GetCourseParams(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null)
                                 .getFirst(),
-                                type
+                                type,
+                                categoryId
                         )
                 )
         );

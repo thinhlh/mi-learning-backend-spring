@@ -16,4 +16,5 @@ public class CreateNoteRequest {
     private String email;
     private String content;
     private int createdAt;
+    private UUID id;
 }

@@ -24,6 +24,7 @@ import com.thinhlh.mi_learning_backend.app.section.domain.entity.Section;
 import com.thinhlh.mi_learning_backend.app.section.domain.service.SectionService;
 import com.thinhlh.mi_learning_backend.app.student_course.domain.service.StudentCourseService;
 import com.thinhlh.mi_learning_backend.app.teacher.data.repository.TeacherRepository;
+import com.thinhlh.mi_learning_backend.app.user.domain.entity.User;
 import com.thinhlh.mi_learning_backend.app.user.domain.service.UserService;
 import com.thinhlh.mi_learning_backend.helper.ListHelper;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,8 @@ public class DataInitialization {
     private final SectionService sectionService;
     private final RatingService ratingService;
 
+    private final List<User> users = new ArrayList<>();
+
 
     @Bean
     @Order(1)
@@ -75,7 +78,7 @@ public class DataInitialization {
             Arrays.stream(Role.RoleName.values()).toList().forEach(roleName -> {
                 authService.registerUser(
                         RegisterRequest.builder()
-                                .name(roleName.name())
+                                .name(roleName.name().substring(0, 1).toUpperCase() + roleName.name().substring(1))
                                 .password(roleName.name())
                                 .email(roleName.name() + "@gmail.com")
                                 .occupation(roleName.name())
@@ -145,6 +148,22 @@ public class DataInitialization {
                             .avatar("https://source.unsplash.com/random/?avatar")
                             .build()
             );
+
+            for (int i = 0; i < 20; i++) {
+                users.add(
+                        authService.registerUser(
+                                RegisterRequest.builder()
+                                        .name("Student " + i)
+                                        .password("student" + i + "@gmail.com")
+                                        .email("student" + i + "@gmail.com")
+                                        .occupation(Role.RoleName.student.name())
+                                        .birthday(LocalDate.now())
+                                        .role(Role.RoleName.student.name())
+                                        .avatar("https://source.unsplash.com/random/?avatar&sig=" + i)
+                                        .build()
+                        )
+                );
+            }
         };
     }
 
@@ -774,6 +793,7 @@ public class DataInitialization {
                 studentCourseService.studentJoinCourse("hoangthinh@gmail.com", course.getId());
             }
             studentCourseService.studentJoinCourse("student@gmail.com", course.getId());
+            users.forEach(user -> studentCourseService.studentJoinCourse(user.getEmail(), course.getId()));
         });
     }
 
@@ -808,12 +828,12 @@ public class DataInitialization {
             add("Hi. I have question that, we shoud create new feature for each screen or not? because we have pages, widgets for each feature. How do we divide project to features easily?");
         }};
 
-        for (int i = 0; i < courses.size() - 1; i++) {
+        for (Course course : courses) {
             for (int j = 0; j < new Random().nextInt(1, contents.size()); j++) {
                 ratingService.createRating(RatingRequest.builder()
-                        .courseId(courses.get(i).getId())
+                        .courseId(course.getId())
                         .value(new Random().nextInt(1, 6))
-                        .studentId(userService.getUserDetail("student@gmail.com").getId())
+                        .studentId(users.get(new Random().nextInt(0, users.size())).getId())
                         .content(contents.get(new Random().nextInt(0, contents.size())))
                         .build());
             }

@@ -40,11 +40,11 @@ public class RatingServiceImpl implements RatingService {
         return mapper.toCourseRatingResponse(
                 ratings,
                 averageForEachStar,
-                ratings
+                Math.round(ratings
                         .stream()
                         .flatMapToDouble(rating ->
                                 java.util.stream.DoubleStream.of(rating.getValue())).average()
-                        .orElse(0),
+                        .orElse(0) * 100.0) / 100.0,
                 totalRatings);
     }
 

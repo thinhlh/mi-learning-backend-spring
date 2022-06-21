@@ -5,6 +5,7 @@ import com.thinhlh.mi_learning_backend.app.category.domain.entity.Category;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 
 public interface CategoryService {
@@ -14,5 +15,7 @@ public interface CategoryService {
     Category createCategory(CategoryRequest request);
 
     Category getCategoryByTitle(String title);
+
+    Category getCategoryById(UUID id);
 
 }
