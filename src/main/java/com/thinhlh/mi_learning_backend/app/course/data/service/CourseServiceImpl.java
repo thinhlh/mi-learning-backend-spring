@@ -163,6 +163,7 @@ public class CourseServiceImpl implements CourseService {
                     .title(section.getTitle())
                     .lessons(section.getLessons().stream().sorted(Comparator.comparing(Lesson::getLessonOrder)).map(lesson -> {
                         var lessonDetail = getLessonDetail(new LessonDetailRequest(email, lesson.getId()));
+
                         if (lesson.getVideoLesson() != null) {
                             length.addAndGet(lesson.getVideoLesson().getLength());
                         }
@@ -179,6 +180,7 @@ public class CourseServiceImpl implements CourseService {
                                         .builder()
                                         .finished(lessonDetail.isFinished())
                                         .notes(lessonDetail.getNotes())
+                                        .playback(lessonDetail.getPlayback())
                                         .build())
                                 .build();
                     }).collect(Collectors.toList()))
@@ -209,8 +211,9 @@ public class CourseServiceImpl implements CourseService {
                         .courseId(lesson.getSection().getCourse().getId())
                         .sectionId(lesson.getSection().getId())
                         .lesson(lesson)
+                        .playback(0)
                         .notes(studentLesson.getNotes().stream().toList())
-                        .finished(lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
+                        .finished(lastViewedLesson != null && lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
                         .build();
 
                 return response;
@@ -220,6 +223,7 @@ public class CourseServiceImpl implements CourseService {
                         .courseId(lesson.getSection().getCourse().getId())
                         .sectionId(lesson.getSection().getId())
                         .lesson(lesson)
+                        .playback(0)
                         .notes(new ArrayList<>())
                         .finished(false)
                         .build();

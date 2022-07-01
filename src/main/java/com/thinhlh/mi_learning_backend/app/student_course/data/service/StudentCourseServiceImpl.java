@@ -68,7 +68,8 @@ public class StudentCourseServiceImpl implements StudentCourseService {
                             .id(studentLessonKey)
                             .student(student)
                             .lesson(lesson)
-                            .finished(new Random().nextBoolean())
+                            .finished(false)
+                            .playback(0)
                             .build();
                 }).collect(Collectors.toList()));
             });

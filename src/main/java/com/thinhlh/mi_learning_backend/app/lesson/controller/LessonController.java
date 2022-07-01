@@ -1,10 +1,7 @@
 package com.thinhlh.mi_learning_backend.app.lesson.controller;
 
 import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.*;
-import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.CreateLessonUseCase;
-import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.CreateOrUpdateNoteUseCase;
-import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.GetLessonDetailUseCase;
-import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.GetLessonsUseCase;
+import com.thinhlh.mi_learning_backend.app.lesson.domain.usecase.*;
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 import com.thinhlh.mi_learning_backend.base.BaseController;
 import com.thinhlh.mi_learning_backend.base.BaseResponse;
@@ -27,6 +24,7 @@ public class LessonController extends BaseController {
     private final CreateLessonUseCase createLessonUseCase;
     private final GetLessonDetailUseCase getLessonDetailUseCase;
     private final CreateOrUpdateNoteUseCase createOrUpdateNoteUseCase;
+    private final UpdateLessonPlaybackUseCase updateLessonPlaybackUseCase;
 
     @GetMapping("/lessons")
     private ResponseEntity<BaseResponse<List<LessonResponse>>> getLessonsBySection(@RequestParam UUID sectionId) {
@@ -55,6 +53,13 @@ public class LessonController extends BaseController {
         return successResponse(
                 createOrUpdateNoteUseCase.invoke(createNoteRequest)
         );
+    }
+
+    @PutMapping("/lesson/playback")
+    private ResponseEntity<BaseResponse<Boolean>> updateLessonPlayback(@RequestBody UpdateLessonPlaybackRequest updateLessonPlaybackRequest, HttpServletRequest request) {
+        updateLessonPlaybackRequest.setEmail(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst());
+
+        return successResponse(updateLessonPlaybackUseCase.invoke(updateLessonPlaybackRequest));
     }
 
 }

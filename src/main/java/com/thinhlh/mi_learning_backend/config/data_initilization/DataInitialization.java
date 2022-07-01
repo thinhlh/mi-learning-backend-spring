@@ -130,6 +130,30 @@ public class DataInitialization {
                             .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
                             .build()
             );
+
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Max Marximiller")
+                            .password("maxmarximiller")
+                            .email("maxmarximiller@gmail.com")
+                            .occupation(Role.RoleName.teacher.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.teacher.name())
+                            .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
+                            .build()
+            );
+
+            authService.registerUser(
+                    RegisterRequest.builder()
+                            .name("Cater Peggy")
+                            .password("caterpeggy")
+                            .email("caterpeggy@gmail.com")
+                            .occupation(Role.RoleName.teacher.name())
+                            .birthday(LocalDate.now())
+                            .role(Role.RoleName.teacher.name())
+                            .avatar("https://source.unsplash.com/random/?avatar&sig=" + new Random().nextInt(0, 1000))
+                            .build()
+            );
         };
     }
 
@@ -145,7 +169,7 @@ public class DataInitialization {
                             .occupation(Role.RoleName.student.name())
                             .birthday(LocalDate.now())
                             .role(Role.RoleName.student.name())
-                            .avatar("https://source.unsplash.com/random/?avatar")
+                            .avatar("https://source.unsplash.com/random/1080x720/?avatar")
                             .build()
             );
 
@@ -906,7 +930,7 @@ public class DataInitialization {
                             .dueDate(LocalDateTime.now())
                             .location("Microsoft Teams - msjkl")
                             .title("This is a title")
-                            .status(ScheduleStatus.COMPLETED.name())
+                            .status(ScheduleStatus.PENDING.name())
                             .note("This is a noteRemember to bring your own calculator. We don 't have any responsibility to resolve your problem during the test.")
                             .build());
 
@@ -940,7 +964,7 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.CYAN.name())
-                            .dueDate(LocalDateTime.of(2022, 4, 25, 4, 3))
+                            .dueDate(LocalDateTime.of(2022, 5, 25, 4, 3))
                             .location("MS Teams")
                             .title("This is a title")
                             .status(ScheduleStatus.OVERDUE.name())
@@ -952,10 +976,10 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.BLUE.name())
-                            .dueDate(LocalDateTime.of(2022, 5, 15, 4, 3))
+                            .dueDate(LocalDateTime.of(2022, 6, 29, 4, 3))
                             .location("MS Teams")
                             .title("This is a title")
-                            .status(ScheduleStatus.OVERDUE.name())
+                            .status(ScheduleStatus.PENDING.name())
                             .note("This is a note")
                             .build());
 
@@ -964,7 +988,7 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.GREEN.name())
-                            .dueDate(LocalDateTime.of(2022, 5, 18, 4, 3))
+                            .dueDate(LocalDateTime.of(2022, 6, 26, 4, 3))
                             .location("MS Teams")
                             .title("This is a title")
                             .status(ScheduleStatus.COMPLETED.name())
@@ -977,7 +1001,7 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.RED.name())
-                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 1), LocalTime.MIDNIGHT))
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 5), LocalTime.MIDNIGHT))
                             .location("MS Teams")
                             .title("This is a title")
                             .status(ScheduleStatus.PENDING.name())
@@ -989,7 +1013,7 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.RED.name())
-                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 1), LocalTime.MIDNIGHT))
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 7, 10), LocalTime.MIDNIGHT))
                             .location("MS Teams")
                             .title("This is a title")
                             .status(ScheduleStatus.PENDING.name())

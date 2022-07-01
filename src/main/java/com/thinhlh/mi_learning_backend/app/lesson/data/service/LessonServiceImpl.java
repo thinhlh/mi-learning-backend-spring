@@ -104,7 +104,7 @@ public class LessonServiceImpl implements LessonService {
                         .sectionId(lesson.getSection().getId())
                         .lesson(lesson)
                         .notes(studentLesson.getNotes().stream().toList())
-                        .finished(lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
+                        .finished(lastViewedLesson != null && lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
                         .build();
 
                 return response;
@@ -115,5 +115,19 @@ public class LessonServiceImpl implements LessonService {
         } else {
             throw new NotFoundException(LESSON_NOT_FOUND);
         }
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateLessonPlayback(UpdateLessonPlaybackRequest request) {
+        var studentLesson = studentLessonRepository.findByStudent_User_EmailAndLessonId(request.getEmail(), request.getLessonId());
+
+        if (studentLesson == null) {
+            throw new NotFoundException("Student have not joined this lesson");
+        } else {
+            studentLesson.setPlayback(request.getPlayback());
+        }
+
+        return true;
     }
 }

@@ -7,6 +7,7 @@ import com.thinhlh.mi_learning_backend.app.student.domain.entity.Student;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,8 +35,10 @@ public class StudentLesson {
     private Lesson lesson;
 
     @OneToMany(mappedBy = "studentLesson")
-    private Set<Note> notes;
+    private List<Note> notes;
 
     @Column(columnDefinition = "boolean default false")
     private boolean finished;
+
+    private Integer playback;
 }

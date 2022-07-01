@@ -1,9 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.lesson.domain.service;
 
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.CreateNoteRequest;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailRequest;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonDetailResponse;
-import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.LessonRequest;
+import com.thinhlh.mi_learning_backend.app.lesson.controller.dto.*;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
 
@@ -17,4 +14,6 @@ public interface LessonService {
     Lesson createLesson(LessonRequest request);
 
     LessonDetailResponse getLessonDetail(LessonDetailRequest request);
+
+    Boolean updateLessonPlayback(UpdateLessonPlaybackRequest request);
 }

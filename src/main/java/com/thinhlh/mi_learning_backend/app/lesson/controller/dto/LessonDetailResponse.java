@@ -20,4 +20,5 @@ public class LessonDetailResponse {
     private UUID sectionId;
     private boolean finished;
     private List<Note> notes;
+    private int playback;
 }

@@ -19,6 +19,7 @@ import java.util.List;
 public class StudentCourseMetaDataResponse {
     private List<Note> notes;
     private boolean finished;
+    private Integer playback;
 
     // TODO comments, discussions ...
 }
