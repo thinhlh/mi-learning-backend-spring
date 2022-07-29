@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RatingRequest {
+public class CreateRatingRequest {
 
     @NotNull
     private UUID courseId;
@@ -25,6 +25,7 @@ public class RatingRequest {
     private Integer rating;
 
     @NotNull
-    private UUID studentId;
+    private String email;
 
 }
+

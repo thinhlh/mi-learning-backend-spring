@@ -16,4 +16,6 @@ public interface LessonService {
     LessonDetailResponse getLessonDetail(LessonDetailRequest request);
 
     Boolean updateLessonPlayback(UpdateLessonPlaybackRequest request);
+
+    Boolean updateLessonFinishedStatus(UpdateLessonFinishedStatusRequest request);
 }

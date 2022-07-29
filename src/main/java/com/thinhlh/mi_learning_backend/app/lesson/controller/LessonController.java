@@ -26,6 +26,8 @@ public class LessonController extends BaseController {
     private final CreateOrUpdateNoteUseCase createOrUpdateNoteUseCase;
     private final UpdateLessonPlaybackUseCase updateLessonPlaybackUseCase;
 
+    private final UpdateLessonFinishedStatusUseCase updateLessonFinishedStatusUseCase;
+
     @GetMapping("/lessons")
     private ResponseEntity<BaseResponse<List<LessonResponse>>> getLessonsBySection(@RequestParam UUID sectionId) {
         return successResponse(getLessonsUseCase.invoke(sectionId));
@@ -60,6 +62,13 @@ public class LessonController extends BaseController {
         updateLessonPlaybackRequest.setEmail(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst());
 
         return successResponse(updateLessonPlaybackUseCase.invoke(updateLessonPlaybackRequest));
+    }
+
+    @PutMapping("/lesson/status")
+    private ResponseEntity<BaseResponse<Boolean>> updateLessonFinishedStatus(@RequestBody UpdateLessonFinishedStatusRequest updateLessonFinishedStatusRequest, HttpServletRequest request) {
+        updateLessonFinishedStatusRequest.setEmail(ServletHelper.retrieveUsernameAndRolesFromRequest(request, null).getFirst());
+
+        return successResponse(updateLessonFinishedStatusUseCase.invoke(updateLessonFinishedStatusRequest));
     }
 
 }

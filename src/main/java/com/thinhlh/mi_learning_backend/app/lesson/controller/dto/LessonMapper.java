@@ -4,6 +4,8 @@ import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.TestLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.VideoLesson;
 import com.thinhlh.mi_learning_backend.app.note.domain.entity.Note;
+import com.thinhlh.mi_learning_backend.app.question.domain.entities.Answer;
+import com.thinhlh.mi_learning_backend.app.question.domain.entities.Question;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -29,6 +31,12 @@ public interface LessonMapper {
     @Mapping(target = "section", ignore = true)
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
     Lesson toLesson(LessonRequest request);
+
+
+    @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    Question toQuestion(QuestionRequest request);
+
+    Answer toAnswer(QuestionRequest.AnswerRequest request);
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
     Note createNoteRequestToNote(CreateNoteRequest createNoteRequest);

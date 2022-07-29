@@ -1,5 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.lesson.controller.dto;
 
+import com.thinhlh.mi_learning_backend.app.question.domain.entities.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -30,4 +32,6 @@ public class LessonRequest {
 
     @NotNull
     private boolean isVideo;
+
+    private List<QuestionRequest> questions;
 }

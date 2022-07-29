@@ -22,9 +22,13 @@ public interface RatingMapper {
     RatingResponse toRatingResponse(Rating rating);
 
 
-
+    @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "value", source = "rating")
+    Rating toRating(RatingRequest request);
 
     @Mapping(target = "id", expression = "java(UUID.randomUUID())")
-    Rating toRating(RatingRequest request);
+    @Mapping(target = "value", source = "rating")
+    Rating toRating(CreateRatingRequest request);
+
 
 }

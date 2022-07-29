@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Configuration
@@ -856,7 +857,7 @@ public class DataInitialization {
             for (int j = 0; j < new Random().nextInt(1, contents.size()); j++) {
                 ratingService.createRating(RatingRequest.builder()
                         .courseId(course.getId())
-                        .value(new Random().nextInt(1, 6))
+                        .rating(new Random().nextInt(1, 6))
                         .studentId(users.get(new Random().nextInt(0, users.size())).getId())
                         .content(contents.get(new Random().nextInt(0, contents.size())))
                         .build());
@@ -871,7 +872,12 @@ public class DataInitialization {
         courses.forEach(course -> {
             sections.add(sectionService.createSection(SectionRequest.builder()
                     .courseId(course.getId())
-                    .title("Introduction")
+                    .title("Beginner")
+                    .build()));
+
+            sections.add(sectionService.createSection(SectionRequest.builder()
+                    .courseId(course.getId())
+                    .title("Advanced")
                     .build()));
         });
 
@@ -897,23 +903,37 @@ public class DataInitialization {
             put("Flutter TDD Clean Architecture Course [14] – User Interface", "https://storage.googleapis.com/mi-learning.appspot.com/Flutter%20TDD%20Clean%20Architecture%20Course%20%5B14%5D%20%E2%80%93%20User%20Interface.mp4");
         }};
 
+        var groupedSections = sections.stream().collect(Collectors.groupingBy((section) -> section.getCourse().getId()));
 
-        sections.forEach(section -> {
-                    for (int i = 0; i < videoURLs.size(); i++) {
-                        lessonService.createLesson(
-                                LessonRequest
-                                        .builder()
-                                        .isVideo(true)
-                                        .lessonOrder(i)
-                                        .title(videoURLs.entrySet().stream().toList().get(i).getKey())
-                                        .videoUrl(videoURLs.entrySet().stream().toList().get(i).getValue())
-                                        .length(new Random().nextInt(0, 60 * 60 + 1))
-                                        .sectionId(section.getId())
-                                        .build());
-                    }
-                }
+        groupedSections.forEach((courseId, courseSection) -> {
+            for (int i = 0; i < Math.floor(videoURLs.size() / 2.0); i++) {
+                lessonService.createLesson(
+                        LessonRequest
+                                .builder()
+                                .isVideo(true)
+                                .lessonOrder(i)
+                                .title(videoURLs.entrySet().stream().toList().get(i).getKey())
+                                .videoUrl(videoURLs.entrySet().stream().toList().get(i).getValue())
+                                .length(new Random().nextInt(0, 60 * 60 + 1))
+                                .sectionId(courseSection.get(0).getId())
+                                .build());
+            }
 
-        );
+            for (int i = (int) Math.floor(videoURLs.size() / 2.0); i < videoURLs.size(); i++) {
+                lessonService.createLesson(
+                        LessonRequest
+                                .builder()
+                                .isVideo(true)
+                                .lessonOrder(i)
+                                .title(videoURLs.entrySet().stream().toList().get(i).getKey())
+                                .videoUrl(videoURLs.entrySet().stream().toList().get(i).getValue())
+                                .length(new Random().nextInt(0, 60 * 60 + 1))
+                                .sectionId(courseSection.get(1).getId())
+                                .build());
+            }
+        });
+
+
     }
 
     @Bean
@@ -925,11 +945,11 @@ public class DataInitialization {
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.BROWN.name())
                             .dueDate(LocalDateTime.now())
                             .location("Microsoft Teams - msjkl")
-                            .title("This is a title")
+                            .title("Join team and complete mini test")
                             .status(ScheduleStatus.PENDING.name())
                             .note("This is a noteRemember to bring your own calculator. We don 't have any responsibility to resolve your problem during the test.")
                             .build());
@@ -937,11 +957,11 @@ public class DataInitialization {
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.GREEN.name())
                             .dueDate(LocalDateTime.now())
-                            .location("MS Teams")
-                            .title("This is a title")
+                            .location("UIT")
+                            .title("Go to UIT and sign your name for your presence")
                             .status(ScheduleStatus.PENDING.name())
                             .note("This is a note")
                             .build());
@@ -949,26 +969,26 @@ public class DataInitialization {
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.BLUE.name())
                             .dueDate(LocalDateTime.now())
-                            .location("MS Teams")
-                            .title("This is a title")
+                            .location("Zoom")
+                            .title("Enroll to seminar")
                             .status(ScheduleStatus.COMPLETED.name())
-                            .note("This is a note")
+                            .note("Seminar about architectures")
                             .build());
 
             // Previous
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.CYAN.name())
-                            .dueDate(LocalDateTime.of(2022, 5, 25, 4, 3))
-                            .location("MS Teams")
-                            .title("This is a title")
+                            .dueDate(LocalDateTime.of(2022, 6, 25, 4, 3))
+                            .location("Course")
+                            .title("Do exercise No.3")
                             .status(ScheduleStatus.OVERDUE.name())
-                            .note("This is a note")
+                            .note("No exception")
                             .build());
 
             scheduleService.createSchedule(
@@ -976,36 +996,36 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.BLUE.name())
-                            .dueDate(LocalDateTime.of(2022, 6, 29, 4, 3))
-                            .location("MS Teams")
+                            .dueDate(LocalDateTime.of(2022, 7, 8, 4, 3))
+                            .location("Do exercise No.4")
                             .title("This is a title")
                             .status(ScheduleStatus.PENDING.name())
-                            .note("This is a note")
+                            .note("No exception")
                             .build());
 
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.GREEN.name())
-                            .dueDate(LocalDateTime.of(2022, 6, 26, 4, 3))
+                            .dueDate(LocalDateTime.of(2022, 7, 26, 4, 3))
                             .location("MS Teams")
-                            .title("This is a title")
+                            .title("Join to E Learning meeting channel")
                             .status(ScheduleStatus.COMPLETED.name())
-                            .note("This is a note")
+                            .note("Remember to show your code")
                             .build());
 
             // Future
             scheduleService.createSchedule(
                     ScheduleRequest
                             .builder()
-                            .email("student@gmail.com")
+                            .email("hoangthinh@gmail.com")
                             .color(ScheduleColor.RED.name())
-                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 6, 5), LocalTime.MIDNIGHT))
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 7, 5), LocalTime.MIDNIGHT))
                             .location("MS Teams")
-                            .title("This is a title")
+                            .title("Final examination")
                             .status(ScheduleStatus.PENDING.name())
-                            .note("This is a note")
+                            .note("Subject: E Learning")
                             .build());
 
             scheduleService.createSchedule(
@@ -1013,11 +1033,11 @@ public class DataInitialization {
                             .builder()
                             .email("student@gmail.com")
                             .color(ScheduleColor.RED.name())
-                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 7, 10), LocalTime.MIDNIGHT))
-                            .location("MS Teams")
-                            .title("This is a title")
+                            .dueDate(LocalDateTime.of(LocalDate.of(2022, 7, 5), LocalTime.MIDNIGHT))
+                            .location("Ms Teams")
+                            .title("Final report")
                             .status(ScheduleStatus.PENDING.name())
-                            .note("This is a note")
+                            .note("This is the final note")
                             .build());
 
         };

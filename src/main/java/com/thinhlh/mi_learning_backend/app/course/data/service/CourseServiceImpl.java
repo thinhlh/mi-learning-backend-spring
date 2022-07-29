@@ -205,7 +205,6 @@ public class CourseServiceImpl implements CourseService {
                 lessonsInCourse.sort(Comparator.comparing(Lesson::getLessonOrder));
                 var lastViewedLesson = getLastFinishedLessonInCourse(courseId, request.getEmail());
 
-
                 var response = LessonDetailResponse
                         .builder()
                         .courseId(lesson.getSection().getCourse().getId())
@@ -213,7 +212,7 @@ public class CourseServiceImpl implements CourseService {
                         .lesson(lesson)
                         .playback(0)
                         .notes(studentLesson.getNotes().stream().toList())
-                        .finished(lastViewedLesson != null && lastViewedLesson.getLessonOrder() > lesson.getLessonOrder())
+                        .finished(studentLesson.isFinished())
                         .build();
 
                 return response;

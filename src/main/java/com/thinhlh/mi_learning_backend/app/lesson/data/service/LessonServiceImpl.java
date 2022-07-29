@@ -10,12 +10,16 @@ import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.Lesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.TestLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.entity.VideoLesson;
 import com.thinhlh.mi_learning_backend.app.lesson.domain.service.LessonService;
+import com.thinhlh.mi_learning_backend.app.question.domain.entities.Answer;
+import com.thinhlh.mi_learning_backend.app.question.domain.entities.Question;
 import com.thinhlh.mi_learning_backend.app.section.data.repository.SectionRepository;
 import com.thinhlh.mi_learning_backend.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Temporal;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -68,6 +72,22 @@ public class LessonServiceImpl implements LessonService {
                 var testLesson = new TestLesson();
                 testLesson.setId(lesson.getId());
                 testLesson.setLesson(lesson);
+
+                testLesson.setQuestions(
+                        request.getQuestions().stream().map((it) -> Question
+
+                                        .builder()
+                                        .id(UUID.randomUUID())
+                                        .question(it.getQuestion())
+                                        .thumbnail(it.getThumbnail())
+                                        .lesson(testLesson)
+                                        .answers(it.getAnswers().stream().map((answer) -> Answer
+                                                .builder()
+                                                .content(answer.getContent())
+                                                .isCorrect(answer.isCorrect())
+                                                .build()).toList())
+                                        .build())
+                                .toList());
 
                 lesson.setTestLesson(testLesson);
                 testLessonRepository.save(testLesson);
@@ -126,6 +146,20 @@ public class LessonServiceImpl implements LessonService {
             throw new NotFoundException("Student have not joined this lesson");
         } else {
             studentLesson.setPlayback(request.getPlayback());
+        }
+
+        return true;
+    }
+
+    @Override
+    public Boolean updateLessonFinishedStatus(UpdateLessonFinishedStatusRequest request) {
+        var studentLesson = studentLessonRepository.findByStudent_User_EmailAndLessonId(request.getEmail(), request.getLessonId());
+
+        if (studentLesson == null) {
+            throw new NotFoundException("Student have not joined this lesson");
+        } else {
+            studentLesson.setFinished(request.getFinished());
+            studentLessonRepository.save(studentLesson);
         }
 
         return true;

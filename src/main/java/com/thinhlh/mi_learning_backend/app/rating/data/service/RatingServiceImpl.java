@@ -1,8 +1,6 @@
 package com.thinhlh.mi_learning_backend.app.rating.data.service;
 
-import com.thinhlh.mi_learning_backend.app.rating.controller.dto.CourseRatingResponse;
-import com.thinhlh.mi_learning_backend.app.rating.controller.dto.RatingMapper;
-import com.thinhlh.mi_learning_backend.app.rating.controller.dto.RatingRequest;
+import com.thinhlh.mi_learning_backend.app.rating.controller.dto.*;
 import com.thinhlh.mi_learning_backend.app.rating.data.repository.RatingRepository;
 import com.thinhlh.mi_learning_backend.app.rating.domain.entity.Rating;
 import com.thinhlh.mi_learning_backend.app.rating.domain.service.RatingService;
@@ -64,10 +62,28 @@ public class RatingServiceImpl implements RatingService {
         return repository.save(rating);
     }
 
+    @Override
+    @Transactional
+    public RatingResponse createRating(CreateRatingRequest request) {
+        var rating = mapper.toRating(request);
+
+        var studentCourse = studentCourseRepository.findByStudent_User_EmailAndCourse_Id(request.getEmail(), request.getCourseId());
+
+        if (studentCourse == null) {
+//            throw new NotFoundException();
+        } else {
+            rating.setStudentCourse(studentCourse);
+        }
+
+        rating = repository.save(rating);
+
+        return mapper.toRatingResponse(rating);
+    }
+
     private Integer averagePercentageForEachStar(List<Rating> ratings, Integer totalRatings, Integer value) {
         return ratings
                 .stream()
-                .filter(rating -> rating.getValue().equals(value))
+                .filter(rating -> rating.getValue() != null && rating.getValue().equals(value))
                 .toList()
                 .size()
                 * 100 / (totalRatings.doubleValue() == 0 ? 1 : totalRatings);
